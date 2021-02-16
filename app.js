@@ -29,7 +29,7 @@ app.all('*', function(req, res, next) {
 
 
 app.get('/alluser', function(req, res){
-    console.log('+++ api: /alluser');
+    console.log(chalk.yellow('+++ api: /alluser'));
     mysqls.getAllUsers().then(function (result){
         res.send(new Result(result))
     })
@@ -37,10 +37,10 @@ app.get('/alluser', function(req, res){
 
 
 app.post('/login', function (req, res){
-    console.log('+++ api: /login , params', JSON.stringify(req.body));
+    console.log(chalk.yellow('+++ api: /login , params', JSON.stringify(req.body)));
     // TODO 拿到请求参数，查询users表中是否有这个用户，没有就返回2001，有就2002
     if(req.body){
-        const params = req.body;
+        let params = req.body;
         mysqls.findByAccount(params.account).then(function (result){
             res.send(new Result(result));
         })
@@ -48,12 +48,22 @@ app.post('/login', function (req, res){
 })
 
 app.post('/registe', function (req, res){
-    console.log(chalk.cyan('req.body', JSON.stringify(req.body)));
+    console.log(chalk.yellow('+++ api: /registe, req.body', JSON.stringify(req.body)));
     if(req.body){
-        const account = req.body.account;
-        console.log(chalk.yellow('account', account));
-        mysqls.registeUser(req.body).then(function (result){
-            res.send(new Result(result));
+        let params = req.body;
+        mysqls.findByAccount(params.account).then(function (result){
+            let code = result.code;
+            if(code == 2001){
+                mysqls.registeUser(params).then(function (){
+                    res.send(new Result(statusCodeEnum.INSERT_SUCCESS));
+                })
+            }else if(code == 2002){
+                res.send(new Result(statusCodeEnum.INSERT_FAILD));
+            }else{
+                res.send('nothing')
+            }
+        }).catch(function (err){
+            console.error(chalk.red(err));
         })
     }
 })

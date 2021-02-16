@@ -3,7 +3,6 @@ const mysql = require('mysql');
 const statusCodeEnum = require('./status_code')
 const conf = require('./conf');
 const connection = mysql.createConnection(conf);
-const randomUserId = 'userId_' + parseInt((Math.random(10) * 100000000000000000000)); 
 const chalk = require('chalk');
 
 connection.connect();
@@ -27,12 +26,21 @@ module.exports = {
     },
 
     // 注册，写入数据库
-    registeUser: function (obj){
-        //先查询
-        var result = this.findByAccount(obj.account);
-        let {code, msg, data} = result;
-        console.log(chalk.grey('code', code, msg, data));
-        return result;
+    registeUser: function (user){
+        let userObj = user;
+        let randomUserId = 'userId_' + parseInt((Math.random(10) * 100000000000000000000));
+        Object.setPrototypeOf(userObj, new Object());
+        console.log('mysql registe recived params: ', userObj);
+        var querySentence = `INSERT INTO users(user_id, username, account, password, age, birthday, createtime)
+                            VALUES(${'\'' + randomUserId + '\''}, 
+                                   ${'\'' + userObj.username + '\''}, 
+                                   ${'\'' + userObj.account + '\''}, 
+                                   ${'\'' + userObj.password + '\''}, 
+                                   ${userObj.age}, 
+                                   ${'\'' + userObj.birthday + '\''}, 
+                                   ${'\'' + userObj.createtime + '\''})`;
+        var statusCodeSuccess = statusCodeEnum.INSERT_SUCCESS;
+        return this.generalGet(querySentence, statusCodeSuccess);
     },
 
     generalGet: function (querySentence, statusCodeSuccess, statusCodeFaild){
@@ -42,7 +50,7 @@ module.exports = {
                 if(error){
                     reject(error);
                 }
-                if(results.length > 0){
+                if(results && results.length > 0){
                     resolve({
                         code: statusCodeSuccess.code,
                         msg: statusCodeSuccess.msg,
@@ -56,6 +64,7 @@ module.exports = {
                         })
                     }
                 }
+                resolve();
             })
         })
     }

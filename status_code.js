@@ -12,7 +12,7 @@ const codeEnum = {
         msg: 'server error'
     },
     
-    /* 用户错误 */
+    /* 用户 */
     USER_NO_EXSIT: {
         code: 2001,
         msg: 'user not exsit'
@@ -20,6 +20,16 @@ const codeEnum = {
     USER_HAS_EXISTED: {
         code: 2002,
         msg: 'user has exsited'
+    },
+
+    /* 数据库 */
+    INSERT_SUCCESS: {
+        code: 3000,
+        msg: 'insert success'
+    },
+    INSERT_FAILD: {
+        code: 3001,
+        msg: 'insert faild, user is exsist'
     }
 }
 

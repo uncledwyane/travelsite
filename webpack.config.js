@@ -78,6 +78,13 @@ module.exports = {
                 }]
             },
             {
+                test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+                loader: 'url-loader',
+                query: {
+                  limit: 10000
+                }
+            },
+            {
                 test: /\.(mp4)$/,
                 use: [{
                     loader: 'file-loader'

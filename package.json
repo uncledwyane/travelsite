@@ -21,6 +21,7 @@
   "homepage": "https://github.com/uncledwyane/musicplayer#readme",
   "dependencies": {
     "axios": "^0.21.1",
+    "element-ui": "^2.15.0",
     "muse-ui": "^3.0.1",
     "muse-ui-toast": "^0.3.0",
     "vue": "^2.6.8",

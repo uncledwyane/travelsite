@@ -6,8 +6,10 @@ import router from './router/router'
 import Axios from 'axios'
 import store from '@/store/index.js'
 import CustomTheme from '@/components/theme'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 
-
+Vue.use(ElementUI)
 Vue.use(VueRouter)
 Vue.use(Vuex)
 

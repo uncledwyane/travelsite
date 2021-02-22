@@ -1,131 +1,120 @@
 <template>
-  <div>
-      <div class="login_box">
-          <div class="login_category">
-              <div class="login_with_phone category_name" :class="{category_active: category == 'phone'}">手机</div>
-              <div class="login_with_email category_name" :class="{category_active: category == 'email'}">邮箱</div>
-          </div>
-          <div class="login_phone" v-show="category == 'phone'">
-              <div class="phonenumber">
-                    <i class="fa phone_icon"></i>
-                    <input type="number" name="phonenumber" id="phone_input" class="form_data_input">
-              </div>
-              <div class="password">
-                  <i class="fa password_icon"></i>
-                  <input type="password" id="phone_password_input" class="form_data_input">
-              </div>
-          </div>
-          <div class="login_email" v-show="category == 'email'">
-              <div class="email">
-                    <i class="fa email_icon"></i>
-                    <input type="email" name="email" id="email_input" class="form_data_input">
-              </div>
-              <div class="password">
-                  <i class="fa password_icon"></i>
-                  <input type="password" id="email_password_input" class="form_data_input">
-              </div>
-          </div>
-          <div class="excute_login">
-              <button class="excute_login_btn">登录</button>
-          </div>
-      </div>
-  </div>
+    <div id="login-wrap">
+        <div id="login" class="form" v-show="state == 'login'">
+            <div class="title title-login">{{ title.login }}</div>
+            <el-input v-model="account" placeholder="请输入用户名" class="form-input"></el-input>
+            <el-input v-model="password" placeholder="请输入密码" show-password class="form-input"></el-input>
+            <el-button type="primary" class="action-button" @click="login">登录</el-button>
+        </div>
+        <div id="registe" class="form" v-show="state == 'registe'">
+            <div class="title title-registe" >{{ title.registe }}</div>
+            <el-input v-model="username" placeholder="请输入用户名" class="form-input"></el-input>
+            <el-input v-model="account" placeholder="请输入账户名称" class="form-input"></el-input>
+            <el-input v-model="password" placeholder="请输入密码" class="form-input"></el-input>
+            <el-date-picker
+                v-model="birthday"
+                type="date"
+                placeholder="请选择生日"
+                class="form-input">
+            </el-date-picker>
+            <el-button type="success" class="action-button" @click="registe">注册</el-button>
+    </div>
+    </div>
 </template>
 
 <script>
+import {mapState, mapMutations} from 'vuex'
 export default {
     data () {
         return {
-            category: 'phone'
+            state: 'login',
+            username: '',
+            password: '',
+            account: '',
+            birthday: '',
+            title: {
+                login: '登录',
+                registe: '注册 '
+            }
+        }
+    },
+    computed: {
+        ...mapState([
+            'isLogin'
+        ])
+    },
+    methods: {
+        ...mapMutations([
+            'setLoginState'
+        ]),
+        login(){
+            var self = this;
+            if(!self.account || !self.password){
+                self.$message.error('必要信息为空，请重新输入！')
+            }else{
+                var params = {
+                    account: self.account,
+                    password: self.password
+                }
+                self.$axios.post('/login', params).then(function (res){
+                    var data = res.data;
+                    if(data.code == 2001){
+                        // 没有这个用户
+                        self.$message.error('没有这个账户，请重新输入！');
+                    }else if(data.code == 2002){
+                        console.log('is esist data', data);
+                        if(self.password !== data.data[0].password){
+                            self.$message.error('密码错误，请重新输入！');
+                        }else if(self.password === data.data[0].password){
+                            self.setLoginState(true);
+                            localStorage.setItem('isLogin', true);
+                            localStorage.setItem('currentUser', JSON.stringify(res.data.data[0]));
+                            self.$message({
+                                message: '登录成功，即将跳转',
+                                type: 'success'
+                            })
+                        }else{}
+                    }
+                })
+            }
+        },
+        registe(){
+            var self = this;
         }
     }
 }
 </script>
 
 <style lang='scss' scoped>
-@import '../scss/theme.scss';
-.login_box{
-    width: 400px;
-    height: 250px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: $background-color-dark;
-    border-radius: 15px;
-    box-sizing: border-box;
-    padding: 20px;
-}
-.login_category {
-    display: flex;
-    width: 40%;
-    height: 20%;
-}
-.login_with_phone {
-    display: flex;
-    width: 50%;
-    align-items: center;
-    justify-content: center;
-    height: 60%;
-}
-.login_with_email {
-    display: flex;
-    width: 50%;
-    height: 60%;
-    align-items: center;
-    justify-content: center;
-}
-.login_phone , .login_email{
-    display: flex;
-    flex-direction: column;
-    width: 85%;
-}
-.form_data_input{
-    width: 100%;
-    height: 40px;
-    border-radius: 20px;
-    outline: none;
-    border: none;
-    box-sizing: border-box;
-    padding: 0 20px;
-    background: $front-color-dark;
-    color: $font-highlight-color-dark;
-    font-size: 20px;
-}
-.excute_login{
-    width: 100%;
-    margin-top: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 20%;
-}
-button.excute_login_btn {
-    width: 40%;
-    height: 40px;
-    border-radius: 30px;
-    border: none;
-    outline: none;
-    font-size: 18px;
-    color: #fff;
-    background: $font-highlight-color-dark;
-    transition: all ease .2s;
-}
-button.excute_login_btn:hover{
-    cursor: pointer;
-}
-button.excute_login_btn:active{
-    border: none;
-    outline: none;
-    box-shadow: 0 0 15px $font-highlight-color-dark;
-}
-.category_name{
-    color: $font-highlight-color-dark;
-    height: 30px;
-    border-radius: 5px;
-}
-.category_active{
-    color: #fff;
-    // background:  $font-highlight-color-dark;
-    border: 2px dotted $font-highlight-color-dark;
-}
+    #login-wrap{
+        width: 100%;
+        height: 100vh;
+        background: rgba(0,0,0,.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 2;
+    }
+    .form{
+        width: 400px;
+        background: #fff;
+        box-sizing: border-box;
+        padding: 20px;
+        border-radius: 10px;
+    }
+    .form-input{
+        margin-bottom: 15px;
+        width: 100% !important;
+    }
+    .title{
+        text-align: center;
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+    .action-button{
+        width: 100%;
+    }
 </style>

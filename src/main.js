@@ -13,13 +13,13 @@ Vue.use(ElementUI)
 Vue.use(VueRouter)
 Vue.use(Vuex)
 
-Axios.defaults.withCredentials = true
+Axios.defaults.withCredentials = false
 Vue.prototype.$axios = Axios
 
 
 
 new Vue({
-    render: r=>r(App, 'mu-button', {}, 'Hello World'),
+    render: r=>r(App),
     router,
     store
 }).$mount('#app')

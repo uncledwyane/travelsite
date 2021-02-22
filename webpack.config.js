@@ -11,7 +11,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const isDev = process.env.Node_ENV === 'development'
-const proxy = require('./src/api/proxy.js')
+// const proxy = require('./src/api/proxy.js')
 
 function resolve (dir) {
     return path.join(__dirname, '.', dir)
@@ -25,12 +25,14 @@ module.exports = {
         port: 8000,
         compress: true,
         open: true,
-        proxy: {
-            'http://localhost:8000': {
-                target: 'http://localhost:3000',
-                changeOrigin: true
-            }
-        }
+        // proxy: {
+        //     '/alluser': {
+        //         target: 'http://localhost:3000',
+        //         pathRewrite: {'^/alluser' : ''},
+        //         changeOrigin: true,     // target是域名的话，需要这个参数，
+        //         secure: false,          // 设置支持https协议的代理
+        //     },
+        // }
     },
     entry: {
         main: './src/main.js'

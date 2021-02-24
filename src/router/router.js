@@ -1,12 +1,35 @@
 import VueRouter from 'vue-router'
 import Home from '@/components/page/Home'
+import Admin from '@/components/page/Admin'
+import Comment from '@/components/component/Comment'
+import Users from '@/components/component/Users'
+import Posts from '@/components/component/Posts'
+import MyInfo from '@/components/component/MyInfo'
 
 export default new VueRouter({
     // mode: 'history',
     routes: [
-        {path: '/', name: '/', redirect: '/home'},
-        {path: '/home', name: 'name', component: Home},
-        
-        
+        {path: '/', name: '/', redirect: '/admin'},
+        {
+            path: '/home', name: 'name', component: Home
+        },
+        {
+            path: '/admin', name: 'admin', component: Admin,
+            redirect: '/admin/comments',
+            children: [
+                {
+                    path: 'comments', component: Comment
+                },
+                {
+                    path: 'users', component: Users
+                },
+                {
+                    path: 'posts', component: Posts
+                },
+                {
+                    path: 'myinfo', component: MyInfo
+                }
+            ]
+        }
     ]
 })

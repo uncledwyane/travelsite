@@ -10,10 +10,17 @@
             <div class="youji-item" v-for="option in youji" :key="option.name" :class="{'youji-post': option.name == 'post', 'youji-active': option.name == currentOption}" @click="selectOption(option)">{{ option.showName }}</div>
         </div>
     </div>
+    <post v-show="currentOption == 'hot'"></post>
+    <new v-show="currentOption == 'new'"></new>
+    <push v-show="currentOption == 'post'"></push>
   </div>
 </template>
 
 <script>
+import Post from '@/components/component/Post'
+import New from '@/components/component/New'
+import Push from '@/components/component/Push'
+
 export default {
     data () {
         return {
@@ -46,6 +53,11 @@ export default {
             var self = this;
             self.currentOption = option.name;
         }
+    },
+    components: {
+        Post,
+        New,
+        Push,
     }
 }
 </script>
@@ -53,7 +65,7 @@ export default {
 <style lang='scss' scoped>
     #home{
         width: 100%;
-        height: 600px;
+        height: auto;
         background: #fff;
     }
     .el-carousel__item h3 {
@@ -94,5 +106,10 @@ export default {
     }
     .youji-active{
         color: rgb(255, 123, 0);
+    }
+    .bannerImg{
+        width: 100%;
+        position: relative;
+        z-index: 0;
     }
 </style>

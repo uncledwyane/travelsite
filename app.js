@@ -35,6 +35,9 @@ app.all("*",function(req,res,next){
         next();
 })
 
+/**
+ * 用户相关接口
+ */
 
 app.get('/alluser', function(req, res){
     console.log(chalk.yellow('+++ api: /alluser'));
@@ -76,7 +79,50 @@ app.post('/registe', function (req, res){
     }
 })
 
+app.post('/deleteuser', function (req, res){
+    console.log(chalk.yellow('+++ api: /registe, req.body', JSON.stringify(req.body)));
+    mysqls.deleteUserById(req.body.user_id).then(function (result){
+        res.send(result);
+    })
+})
 
+app.post('/modifyuser', function (req, res){
+    console.log(chalk.yellow('+++ api: /registe, req.body', JSON.stringify(req.body)));
+})
+
+
+/**
+ * @description 通过user_id获取用户名
+ */
+app.get('/getuser', function (req, res){    
+    console.log(chalk.yellow('+++ api: /registe, req.body', JSON.stringify(req.query)));
+    if(req.query){
+        let params = req.query;
+        mysqls.getUserByUserId(params.user_id).then(function(result){
+            res.send(result);
+        })
+    }
+})
+
+
+/**
+ * 帖子相关接口
+ */
+app.post('/pushpost', function (req, res){
+    console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.body)));
+    if(req.body){
+        let params = req.body;
+        mysqls.pushPost(params).then(function (result){
+            res.send(result);
+        })
+    }
+})
+
+app.get('/allposts', function (req, res){
+    mysqls.getAllPosts().then(function (result) {
+        res.send(result);
+    })
+})
 
 app.listen(3000, function (){
     console.log('app listen on port 3000...')

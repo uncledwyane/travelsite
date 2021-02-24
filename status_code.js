@@ -30,6 +30,16 @@ const codeEnum = {
     INSERT_FAILD: {
         code: 3001,
         msg: 'insert faild, user is exsist'
+    },
+
+    /* 帖子 */
+    PUSH_SUCCESS: {
+        code: 4000,
+        msg: 'push success'
+    },
+    GET_SUCCESS: {
+        code: 4001,
+        msg: 'get success'
     }
 }
 

@@ -43,6 +43,53 @@ module.exports = {
         return this.generalGet(querySentence, statusCodeSuccess);
     },
 
+    getUserByUserId: function (user_id){
+        let userId = user_id;
+        var querySentence = `SELECT username FROM users WHERE user_id=${'\'' + userId + '\''}`;
+        var statusCodeSuccess = statusCodeEnum.USER_HAS_EXISTED;
+        return this.generalGet(querySentence, statusCodeSuccess);
+    },
+
+    deleteUserById: function (user_id){
+        let userId = user_id;        
+        var querySentence = `DELETE FROM users WHERE user_id=${'\'' + userId + '\''}`;
+        var statusCodeSuccess = statusCodeEnum.SUCCESS;
+        return this.generalGet(querySentence, statusCodeSuccess);
+    },
+
+    updateUser: function (newUserObj){
+        let userObj = newUserObj;
+    },
+
+
+    /**
+     * 帖子相关查询
+     */
+    pushPost: function (post){
+        let postObj = post;
+        let postTime = this.getCurrentTime();
+        let randomPostId = 'postId_' + parseInt((Math.random(10) * 100000000000000000000));
+        console.log('put post: post body is: ', post);
+        var querySentence = `INSERT INTO posts(user_id, post_id, post_title, post_body, post_time, post_coverimg)
+                            VALUES(
+                                ${'\'' + postObj.user_id + '\''},
+                                ${'\'' + randomPostId + '\''},
+                                ${'\'' + postObj.post_title + '\''},
+                                ${'\'' + postObj.post_body + '\''},
+                                ${'\'' + postTime + '\''},
+                                ${'\'' + postObj.post_cover + '\''}
+                                )`;
+        console.log('pust post, post query sentence: ', querySentence);
+        var statusCodeSuccess = statusCodeEnum.PUSH_SUCCESS;
+        return this.generalGet(querySentence, statusCodeSuccess);
+    },
+
+    getAllPosts(){
+        var querySentence = `SELECT * FROM posts`;
+        var statusCodeSuccess = statusCodeEnum.GET_SUCCESS;
+        return this.generalGet(querySentence, statusCodeSuccess);
+    },
+
     generalGet: function (querySentence, statusCodeSuccess, statusCodeFaild){
         console.log(chalk.magentaBright('recived query: ', querySentence));
         return new Promise(function (resolve, reject){
@@ -67,5 +114,16 @@ module.exports = {
                 resolve();
             })
         })
+    },
+    getCurrentTime(){
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+        var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+        var hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
+        var minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+        var seconds = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
+
+        return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
     }
 }

@@ -56,20 +56,20 @@ export default {
 
 <style lang="scss" scoped>
 #admin-wrap {
-    width: 80%;
-    height: 800px;
+    width: 85%;
+    height: 100%;
     display: flex;
     box-sizing: border-box;
     margin: 20px auto;
     border: 1px solid #545c64;
 }
 .admin-options {
-    width: 20%;
-    height: 100%;
+    width: 18%;
+    // height: 100%;
     background: #545c64;
 }
 .option-content {
-    width: 80%;
+    width: 82%;
     height: 100%;
     box-sizing: border-box;
     padding: 10px;
@@ -79,5 +79,8 @@ export default {
 }
 .el-menu {
     border: none;
+}
+.el-menu-item {
+    text-align: center;
 }
 </style>

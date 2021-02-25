@@ -1,7 +1,7 @@
 import VueRouter from 'vue-router'
 import Home from '@/components/page/Home'
 import Admin from '@/components/page/Admin'
-import Comment from '@/components/component/Comment'
+import Comments from '@/components/component/Comments'
 import Users from '@/components/component/Users'
 import Posts from '@/components/component/Posts'
 import MyInfo from '@/components/component/MyInfo'
@@ -18,7 +18,7 @@ export default new VueRouter({
             redirect: '/admin/comments',
             children: [
                 {
-                    path: 'comments', component: Comment
+                    path: 'comments', component: Comments
                 },
                 {
                     path: 'users', component: Users

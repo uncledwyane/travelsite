@@ -1,46 +1,46 @@
 <template>
     <div id="users-manage">
         <el-table :data="users" style="width: 100%" border stripe>
-            <el-table-column label="生日" width="180">
+            <el-table-column label="生日" width="120">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{
                         scope.row.birthday | filterDate(scope.row.birthday)
                     }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="姓名" width="180">
+            <el-table-column label="姓名" width="100">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{ scope.row.username }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="账号" width="180">
+            <el-table-column label="账号" width="100">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{ scope.row.account }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="密码" width="180">
+            <el-table-column label="密码" width="100">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{ scope.row.password }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="年龄" width="180">
+            <el-table-column label="年龄" width="80">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{ scope.row.age }}岁</span>
                 </template>
             </el-table-column>
-            <el-table-column label="用户ID" width="180">
+            <el-table-column label="用户ID" width="250">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{ scope.row.user_id }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="用户角色" width="180">
+            <el-table-column label="用户角色" width="100">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{
                         scope.row.role | filterRole(scope.row.role)
                     }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="创建时间" width="180">
+            <el-table-column label="创建时间" width="220">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{ scope.row.createtime }}</span>
                 </template>
@@ -59,16 +59,24 @@
                 </template>
             </el-table-column>
         </el-table>
+        <div class="add-user">
+            <el-button type="success">新增用户</el-button>
+        </div>
     </div>
 </template>
 
 <script>
 import { mapMutations } from "vuex";
+import bus from "@/components/bus";
+
 export default {
     mounted() {
         var self = this;
         self.$axios.get("/alluser").then(function (res) {
             self.users = res.data.data;
+        });
+        bus.$on("updateusers", function (users) {
+            self.users = users;
         });
     },
     filters: {
@@ -133,5 +141,12 @@ export default {
     width: 100%;
     height: 100%;
     background: #000;
+}
+.add-user {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 </style>

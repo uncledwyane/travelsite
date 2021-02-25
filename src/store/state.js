@@ -5,7 +5,8 @@ var state = {
     currentPost: null,
     isShowPostview: false,
     isShowEdit: false,
-    editUser: null
+    editUser: null,
+    
 }
 
 export default state

@@ -30,13 +30,20 @@
                     <el-button type="success" @click="modify">提交修改</el-button>
                 </el-form-item>
             </el-form>
+            <el-button
+                type="danger"
+                icon="el-icon-close"
+                circle
+                class="close-btn"
+                @click="setIsshowEdit(false)"
+            ></el-button>
         </div>
     </div>
 </template>
 
 <script>
 import { mapState, mapMutations } from "vuex";
-
+import bus from "@/components/bus";
 export default {
     data() {
         return {
@@ -58,13 +65,24 @@ export default {
     },
     mounted() {
         var self = this;
-        self.currentUser = self.editUser;
+        self.currentUser = JSON.parse(JSON.stringify(self.editUser));
     },
     methods: {
         ...mapMutations(["setIsshowEdit"]),
         modify() {
             var self = this;
-            console.log(self.currentUser);
+            var params = self.currentUser;
+            self.$axios.post("/updateuser", params).then(function (res) {
+                console.log(res);
+                self.$axios.get("/alluser").then(function (res) {
+                    bus.$emit("updateusers", res.data.data);
+                    self.$message({
+                        type: "success",
+                        message: "更改成功！",
+                    });
+                    self.setIsshowEdit(false);
+                });
+            });
         },
     },
 };
@@ -90,8 +108,14 @@ export default {
     box-sizing: border-box;
     padding: 20px;
     border-radius: 10px;
+    position: relative;
 }
 .el-form-item {
     margin-bottom: 0px !important;
+}
+.close-btn {
+    position: absolute;
+    right: 5px;
+    top: 5px;
 }
 </style>

@@ -17,6 +17,10 @@ Axios.defaults.withCredentials = false
 Vue.prototype.$axios = Axios
 
 
+const originalPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 
 new Vue({
     render: r=>r(App),

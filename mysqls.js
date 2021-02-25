@@ -4,6 +4,7 @@ const statusCodeEnum = require('./status_code')
 const conf = require('./conf');
 const connection = mysql.createConnection(conf);
 const chalk = require('chalk');
+const { user } = require('./conf');
 
 connection.connect();
 
@@ -59,6 +60,37 @@ module.exports = {
 
     updateUser: function (newUserObj){
         let userObj = newUserObj;
+        var statusCodeSuccess = statusCodeEnum.SUCCESS;
+        var self = this;
+        return new Promise(function(resolve, reject){
+            for(var key in userObj){
+                if(key == 'birthday'){
+                    userObj[key] = self.forMatDate(userObj[key]);
+                    var querySentence = `UPDATE users SET ${key}=${'\'' + userObj[key] + '\''} WHERE user_id=${'\'' + userObj['user_id']  + '\''}`;
+                    console.log(chalk.magentaBright('recived query: ', querySentence));
+                    connection.query(querySentence, function (error, results, fields){
+                        if(results){
+                            resolve(statusCodeSuccess);
+                        }
+                        if(error){
+                            reject(error);
+                        }
+                    })
+                }else{
+                    var querySentence = `UPDATE users SET ${key}=${'\'' + userObj[key] + '\''} WHERE user_id=${'\'' + userObj['user_id']  + '\''}`;
+                    console.log(chalk.magentaBright('recived query: ', querySentence));
+                    connection.query(querySentence, function (error, results, fields){
+                        if(results){
+                            resolve(statusCodeSuccess);
+                        }
+                        if(error){
+                            reject(error);
+                        }
+                    })
+                }
+                
+            }
+        })
     },
 
 
@@ -89,6 +121,40 @@ module.exports = {
         var statusCodeSuccess = statusCodeEnum.GET_SUCCESS;
         return this.generalGet(querySentence, statusCodeSuccess);
     },
+
+
+    deletePostByPostId(postId){
+        var id = postId;
+        var statusCodeSuccess = statusCodeEnum.SUCCESS;
+        var querySentence = `DELETE FROM posts WHERE post_id=${'\''+ id + '\''}`;
+        return this.generalGet(querySentence, statusCodeSuccess);
+    },
+
+
+
+    /**
+     * @description 发表评论
+     */
+    pushComment: function (commentObj){
+        var comment = commentObj;
+        var statusCodeSuccess = statusCodeEnum.SUCCESS;
+        var randomCommentId = 'commentId_' + parseInt((Math.random(10) * 100000000000000000000));
+        var querySentence = `INSERT INTO comments(comment_id, user_id, comment_body, post_id) 
+                            VALUES(
+                                ${'\'' + randomCommentId + '\''},
+                                ${'\'' + comment.user_id + '\''},
+                                ${'\'' + comment.comment_body + '\''},
+                                ${'\'' + comment.post_id + '\''}
+                            )`;
+        return this.generalGet(querySentence, statusCodeSuccess);
+    },
+
+    getComment: function(post_id){
+        var statusCodeSuccess = statusCodeEnum.SUCCESS;
+        var querySentence = `SELECT * FROM comments WHERE post_id=${'\'' + post_id + '\''}`;
+        return this.generalGet(querySentence, statusCodeSuccess);
+    },
+
 
     generalGet: function (querySentence, statusCodeSuccess, statusCodeFaild){
         console.log(chalk.magentaBright('recived query: ', querySentence));
@@ -125,5 +191,9 @@ module.exports = {
         var seconds = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
 
         return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+    },
+    forMatDate(date){
+        var newDate = date;
+        return newDate.split('T')[0];
     }
 }

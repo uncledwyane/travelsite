@@ -104,6 +104,19 @@ app.get('/getuser', function (req, res){
     }
 })
 
+/**
+ * @description 更改用户信息
+ */
+app.post('/updateuser', function (req, res){
+    console.log(chalk.yellow('+++ api: /registe, req.body', JSON.stringify(req.body)));
+    if(req.body){
+        let newObj = req.body;
+        mysqls.updateUser(newObj).then(function (result){
+            res.send(result);
+        })
+    }
+})
+
 
 /**
  * 帖子相关接口
@@ -119,10 +132,38 @@ app.post('/pushpost', function (req, res){
 })
 
 app.get('/allposts', function (req, res){
+    // console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.body)));
     mysqls.getAllPosts().then(function (result) {
         res.send(result);
     })
 })
+
+app.post('/deletepost', function (req, res){
+    console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.body)));
+    mysqls.deletePostByPostId(req.body.post_id).then(function (result){
+        res.send(result);
+    })
+})
+
+/**
+ * 评论xiangg
+ */
+app.post('/pushcomment', function (req, res){
+    console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.body)));
+    if(req.body){
+        mysqls.pushComment(req.body).then(function (result){
+            res.send(result);
+        })
+    }
+})
+
+app.get('/getcomment', function(req, res){
+    console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.query)));
+    mysqls.getComment(req.query.post_id).then(function (result){
+        res.send(result);
+    })
+})
+
 
 app.listen(3000, function (){
     console.log('app listen on port 3000...')

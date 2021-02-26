@@ -52,15 +52,7 @@ export default {
         currentPost: function (val, oldVal) {
             if (val) {
                 var self = this;
-                var postObj = val;
-                var userId = postObj.user_id;
-                var params = {
-                    user_id: userId,
-                };
                 self.post = val;
-                self.$axios.get("/getuser", { params: params }).then(function (res) {
-                    self.username = res.data.data[0].username;
-                });
             }
         },
     },
@@ -80,16 +72,14 @@ export default {
     computed: {
         ...mapState(["isShowPostview", "currentPost"]),
     },
+    created() {
+        var self = this;
+    },
     mounted() {
         var self = this;
     },
     methods: {
         ...mapMutations(["updateShowPostviewState"]),
-        getUser() {
-            self.$axios.get("/getuser", params).then(function (res) {
-                console.log("res: ", res);
-            });
-        },
         pushcomment() {
             var self = this;
             var commentContent = self.comment;

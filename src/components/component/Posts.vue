@@ -1,14 +1,9 @@
 <template>
     <div id="posts-manage">
         <el-table :data="posts" style="width: 100%" border stripe>
-            <el-table-column label="发布者id" width="100">
+            <el-table-column label="发布者" width="100">
                 <template slot-scope="scope">
-                    <span style="margin-left: 10px">{{ scope.row.user_id }}</span>
-                </template>
-            </el-table-column>
-            <el-table-column label="帖子id" width="100">
-                <template slot-scope="scope">
-                    <span style="margin-left: 10px">{{ scope.row.post_id }}</span>
+                    <span style="margin-left: 10px">{{ scope.row.username }}</span>
                 </template>
             </el-table-column>
             <el-table-column label="帖子标题" width="100">
@@ -59,10 +54,27 @@ export default {
     computed: {
         ...mapState(["allPosts"]),
     },
-    mounted() {
+    filters: {
+        formatUserName(user_id) {
+            var self = this;
+            return self.getUserName(user_id);
+        },
+    },
+    mounted() {},
+    created() {
         var self = this;
-        if (self.allPosts) {
-            self.posts = JSON.parse(JSON.stringify(self.allPosts));
+        console.log("updated");
+        var user = JSON.parse(localStorage.getItem("currentUser"));
+        if (user.role == "admin") {
+            self.$axios.get("/allposts").then(function (res) {
+                self.posts = res.data.data;
+            });
+        } else {
+            self.$axios
+                .get("/postswithuser", { params: { user_id: user.user_id } })
+                .then(function (res) {
+                    self.posts = res.data.data;
+                });
         }
     },
     methods: {
@@ -97,6 +109,14 @@ export default {
                         type: "info",
                         message: "已取消删除",
                     });
+                });
+        },
+        getUserName(user_id) {
+            var self = this;
+            self.$axios
+                .get("/getuser", { params: { user_id: user_id } })
+                .then(function (res) {
+                    return res.data[0].username;
                 });
         },
     },

@@ -60,7 +60,7 @@
             </el-table-column>
         </el-table>
         <div class="add-user">
-            <el-button type="success">新增用户</el-button>
+            <el-button type="success" @click="addUser">新增用户</el-button>
         </div>
     </div>
 </template>
@@ -84,7 +84,7 @@ export default {
             return date.split("T")[0];
         },
         filterRole(role) {
-            return role ? role : "普通用户";
+            return role == "admin" ? "管理员" : "普通用户";
         },
     },
     data() {
@@ -93,7 +93,7 @@ export default {
         };
     },
     methods: {
-        ...mapMutations(["setCurrentEditUser", "setIsshowEdit"]),
+        ...mapMutations(["setCurrentEditUser", "setIsshowAdd", "setIsshowEdit"]),
         handleEdit(index, row) {
             console.log(index, row);
             var self = this;
@@ -131,6 +131,10 @@ export default {
                         });
                     });
             }
+        },
+        addUser() {
+            var self = this;
+            self.setIsshowAdd(true);
         },
     },
 };

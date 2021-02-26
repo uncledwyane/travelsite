@@ -27,12 +27,7 @@
                     ></el-date-picker>
                 </el-form-item>
                 <el-form-item style="margin-top: 20px">
-                    <el-button type="success" @click="modify" v-if="state == 'modify'"
-                        >提交修改</el-button
-                    >
-                    <el-button type="success" @click="addUser" v-if="state != 'modify'"
-                        >添加用户</el-button
-                    >
+                    <el-button type="success" @click="addUser">添加用户</el-button>
                 </el-form-item>
             </el-form>
             <el-button
@@ -40,7 +35,7 @@
                 icon="el-icon-close"
                 circle
                 class="close-btn"
-                @click="setIsshowEdit(false)"
+                @click="close"
             ></el-button>
         </div>
     </div>
@@ -60,7 +55,7 @@ export default {
                 header_url: null,
                 role: "",
                 password: "",
-                userName: "",
+                username: "",
                 user_id: "",
             },
             state: "modify",
@@ -78,12 +73,9 @@ export default {
     },
     mounted() {
         var self = this;
-        if (self.state == "modify") {
-            self.currentUser = JSON.parse(JSON.stringify(self.editUser));
-        }
     },
     methods: {
-        ...mapMutations(["setIsshowEdit", "logout"]),
+        ...mapMutations(["setIsshowAdd", "logout"]),
         modify() {
             var self = this;
             var params = self.currentUser;
@@ -95,7 +87,7 @@ export default {
                         type: "success",
                         message: "更改成功！",
                     });
-                    self.setIsshowEdit(false);
+                    self.setIsshowAdd(false);
                 });
                 if (
                     self.currentUser.user_id ==
@@ -109,7 +101,37 @@ export default {
                 }
             });
         },
-        addUser() {},
+        addUser() {
+            var self = this;
+            var params = self.currentUser;
+            console.log(params);
+            self.$axios.post("/adduser", params).then(function (res) {
+                if (res.data.code == 3001) {
+                    self.$message.error("账号已存在，请重新输入！");
+                } else if (res.data.code == 3000) {
+                    self.$message({
+                        type: "success",
+                        message: "添加成功！",
+                    });
+                    self.clearCurrentUser();
+                    self.setIsshowAdd(false);
+                    self.$axios.get("/alluser").then(function (res) {
+                        bus.$emit("updateusers", res.data.data);
+                    });
+                }
+            });
+        },
+        clearCurrentUser() {
+            var self = this;
+            for (var i in self.currentUser) {
+                self.currentUser[i] = "";
+            }
+        },
+        close() {
+            var self = this;
+            self.setIsshowAdd(false);
+            self.clearCurrentUser();
+        },
     },
 };
 </script>

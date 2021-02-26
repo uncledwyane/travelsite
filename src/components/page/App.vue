@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <div id="navigator">
+        <div id="navigator" v-if="loginState">
             <div class="navs">
                 <div
                     class="nav-item"
@@ -12,7 +12,7 @@
                     {{ nav.showName }}
                 </div>
             </div>
-            <div class="user-info" v-show="loginState">
+            <div class="user-info" v-if="loginState">
                 <div class="user-name">
                     {{ currentUserName }}
                 </div>
@@ -24,17 +24,23 @@
         <div id="content">
             <router-view></router-view>
         </div>
-        <div id="bottom-info"></div>
-        <login v-show="!loginState"></login>
-        <postview v-show="isShowPostview"></postview>
-        <edit-user v-if="isShowEdit"></edit-user>
+        <div id="bottom-info" v-if="loginState"></div>
+        <transition name="component">
+            <add-user v-show="isShowAdd"></add-user>
+        </transition>
+        <transition name="component">
+            <postview v-show="isShowPostview"></postview>
+        </transition>
+        <transition name="component">
+            <edit-user v-if="isShowEdit"></edit-user>
+        </transition>
     </div>
 </template>
 
 <script>
-import Login from "@/components/component/Login";
 import Postview from "@/components/component/Postview";
 import EditUser from "@/components/component/EditUser";
+import AddUser from "@/components/component/AddUser";
 import { mapState, mapMutations } from "vuex";
 import bus from "@/components/bus";
 export default {
@@ -68,7 +74,7 @@ export default {
         };
     },
     computed: {
-        ...mapState(["isLogin", "allPosts", "isShowPostview", "isShowEdit"]),
+        ...mapState(["isLogin", "allPosts", "isShowPostview", "isShowEdit", "isShowAdd"]),
     },
     created() {
         var self = this;
@@ -96,9 +102,9 @@ export default {
         }
     },
     components: {
-        Login,
         Postview,
         EditUser,
+        AddUser,
     },
     methods: {
         ...mapMutations(["setAllposts"]),
@@ -114,13 +120,16 @@ export default {
             localStorage.setItem("currentNav", navName);
         },
         logout() {
-            this.$confirm("请确认是否退出?", "提示", {
+            var self = this;
+            self.$confirm("请确认是否退出?", "提示", {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
                 type: "warning",
             }).then(() => {
+                self.$router.push("/login");
                 localStorage.removeItem("currentUser");
                 localStorage.removeItem("isLogin");
+                localStorage.removeItem("currentNav");
                 location.reload();
             });
         },
@@ -188,5 +197,17 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+.component-enter-active,
+.component-leave-active {
+    transition: all ease 0.3s;
+}
+.component-enter,
+.component-leave-to {
+    transform: scale(1);
+    opacity: 0;
+}
+.component-enter-to {
+    opacity: 1;
 }
 </style>

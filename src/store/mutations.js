@@ -18,6 +18,17 @@ const mutations = {
     },
     setIsshowEdit(state, value){
         state.isShowEdit = value;
+    },
+    setIsshowAdd(state, value){
+        state.isShowAdd = value;
+    },
+    logout(state){
+        var self = this;
+        state.isLogin = false;
+        localStorage.removeItem("currentUser");
+        localStorage.removeItem("isLogin");
+        localStorage.removeItem("currentNav");
+        location.reload();
     }
 }
 

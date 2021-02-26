@@ -107,6 +107,7 @@ export default {
                                 message: "登录成功",
                                 type: "success",
                             });
+                            self.$router.push("/home");
                         } else {
                         }
                     }
@@ -176,7 +177,7 @@ export default {
 
 <style lang="scss" scoped>
 #login-wrap {
-    width: 100%;
+    width: 100vw;
     height: 100vh;
     background: rgb(42, 47, 66);
     display: flex;
@@ -185,7 +186,7 @@ export default {
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 2;
+    z-index: 3;
 }
 .form {
     width: 400px;

@@ -8,6 +8,7 @@ import store from '@/store/index.js'
 import CustomTheme from '@/components/theme'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import html2canvas from 'html2canvas'
 
 Vue.use(ElementUI)
 Vue.use(VueRouter)
@@ -15,7 +16,6 @@ Vue.use(Vuex)
 
 Axios.defaults.withCredentials = false
 Vue.prototype.$axios = Axios
-
 
 const originalPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(location) {

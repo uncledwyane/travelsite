@@ -3,7 +3,7 @@
         <div class="admin-options">
             <el-col :span="12">
                 <el-menu
-                    default-active="2"
+                    default-active="comments"
                     class="el-menu-vertical-demo"
                     @select="show"
                     @open="handleOpen"
@@ -16,7 +16,10 @@
                         <i class="el-icon-s-comment"></i>
                         <span slot="title">评论管理</span>
                     </el-menu-item>
-                    <el-menu-item index="users">
+                    <el-menu-item
+                        index="users"
+                        :disabled="user == null || user.role != 'admin'"
+                    >
                         <i class="el-icon-user-solid"></i>
                         <span slot="title">用户管理</span>
                     </el-menu-item>
@@ -48,8 +51,20 @@ export default {
         },
         show(index, indexPath) {
             var self = this;
+            console.log(index);
             self.$router.push("/admin/" + index);
         },
+    },
+    data() {
+        return {
+            user: {
+                role: "",
+            },
+        };
+    },
+    created() {
+        var self = this;
+        self.user = JSON.parse(localStorage.getItem("currentUser"));
     },
 };
 </script>
@@ -57,11 +72,12 @@ export default {
 <style lang="scss" scoped>
 #admin-wrap {
     width: 85%;
+    min-height: 900px;
     height: 100%;
     display: flex;
     box-sizing: border-box;
     margin: 20px auto;
-    border: 1px solid #545c64;
+    border: 1px solid #dcdfe6;
 }
 .admin-options {
     width: 18%;

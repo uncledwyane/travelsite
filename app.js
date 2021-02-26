@@ -80,14 +80,14 @@ app.post('/registe', function (req, res){
 })
 
 app.post('/deleteuser', function (req, res){
-    console.log(chalk.yellow('+++ api: /registe, req.body', JSON.stringify(req.body)));
+    console.log(chalk.yellow('+++ api: /deleteuser, req.body', JSON.stringify(req.body)));
     mysqls.deleteUserById(req.body.user_id).then(function (result){
         res.send(result);
     })
 })
 
 app.post('/modifyuser', function (req, res){
-    console.log(chalk.yellow('+++ api: /registe, req.body', JSON.stringify(req.body)));
+    console.log(chalk.yellow('+++ api: /modifyuser, req.body', JSON.stringify(req.body)));
 })
 
 
@@ -95,7 +95,7 @@ app.post('/modifyuser', function (req, res){
  * @description 通过user_id获取用户名
  */
 app.get('/getuser', function (req, res){    
-    console.log(chalk.yellow('+++ api: /registe, req.body', JSON.stringify(req.query)));
+    console.log(chalk.yellow('+++ api: /getuser, req.body', JSON.stringify(req.query)));
     if(req.query){
         let params = req.query;
         mysqls.getUserByUserId(params.user_id).then(function(result){
@@ -108,11 +108,33 @@ app.get('/getuser', function (req, res){
  * @description 更改用户信息
  */
 app.post('/updateuser', function (req, res){
-    console.log(chalk.yellow('+++ api: /registe, req.body', JSON.stringify(req.body)));
+    console.log(chalk.yellow('+++ api: /updateuser, req.body', JSON.stringify(req.body)));
     if(req.body){
         let newObj = req.body;
+        console.log(newObj);
         mysqls.updateUser(newObj).then(function (result){
             res.send(result);
+        })
+    }
+})
+
+app.post('/adduser', function (req, res){
+    console.log(chalk.yellow('+++ api: /adduser, req.body', JSON.stringify(req.body)));
+    if(req.body){
+        let params = req.body;
+        mysqls.findByAccount(params.account).then(function (result){
+            let code = result.code;
+            if(code == 2001){
+                mysqls.addUser(params).then(function (){
+                    res.send(new Result(statusCodeEnum.INSERT_SUCCESS));
+                })
+            }else if(code == 2002){
+                res.send(new Result(statusCodeEnum.INSERT_FAILD));
+            }else{
+                res.send('nothing')
+            }
+        }).catch(function (err){
+            console.error(chalk.red(err));
         })
     }
 })
@@ -132,8 +154,16 @@ app.post('/pushpost', function (req, res){
 })
 
 app.get('/allposts', function (req, res){
-    // console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.body)));
+    console.log(chalk.yellow('+++ api: /allposts, req.body', JSON.stringify(req.body)));
     mysqls.getAllPosts().then(function (result) {
+        res.send(result);
+    })
+})
+
+
+app.get('/postswithuser', function (req, res){
+    console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.query)));
+    mysqls.getPostsByUserId(req.query.user_id).then(function (result) {
         res.send(result);
     })
 })
@@ -149,7 +179,7 @@ app.post('/deletepost', function (req, res){
  * 评论xiangg
  */
 app.post('/pushcomment', function (req, res){
-    console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.body)));
+    console.log(chalk.yellow('+++ api: /pushcomment, req.body', JSON.stringify(req.body)));
     if(req.body){
         mysqls.pushComment(req.body).then(function (result){
             res.send(result);
@@ -159,7 +189,32 @@ app.post('/pushcomment', function (req, res){
 
 app.get('/getcomment', function(req, res){
     console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.query)));
-    mysqls.getComment(req.query.post_id).then(function (result){
+    mysqls.getCommentByPostId(req.query.post_id).then(function (result){
+        res.send(result);
+    })
+})
+
+app.get('/getcommentwithuser', function(req, res){
+    console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.query)));
+    mysqls.getCommentByUserId(req.query.user_id).then(function (result){
+        res.send(result);
+    })
+})
+
+/**
+ * 获取所有评论
+ */
+app.get('/allcomments', function(req, res){
+    console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.query)));
+    mysqls.getAllComments().then(function (result){
+        res.send(result);
+    })
+})
+
+
+app.post('/deletecomment', function(req, res){
+    console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.body)));
+    mysqls.deleteComment(req.body.comment_id).then(function (result){
         res.send(result);
     })
 })

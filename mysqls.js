@@ -29,17 +29,22 @@ module.exports = {
     // 注册，写入数据库
     registeUser: function (user){
         let userObj = user;
+        let header_url = 'null';
+        let role = 'user';
         let randomUserId = 'userId_' + parseInt((Math.random(10) * 100000000000000000000));
         Object.setPrototypeOf(userObj, new Object());
         console.log('mysql registe recived params: ', userObj);
-        var querySentence = `INSERT INTO users(user_id, username, account, password, age, birthday, createtime)
+        var querySentence = `INSERT INTO users(user_id, username, account, password, age, birthday, createtime, header_url, role)
                             VALUES(${'\'' + randomUserId + '\''}, 
                                    ${'\'' + userObj.username + '\''}, 
                                    ${'\'' + userObj.account + '\''}, 
                                    ${'\'' + userObj.password + '\''}, 
                                    ${userObj.age}, 
                                    ${'\'' + userObj.birthday + '\''}, 
-                                   ${'\'' + userObj.createtime + '\''})`;
+                                   ${'\'' + userObj.createtime + '\''},
+                                   ${'\'' + header_url + '\''}, 
+                                   ${'\'' + role + '\''});
+                                   `;
         var statusCodeSuccess = statusCodeEnum.INSERT_SUCCESS;
         return this.generalGet(querySentence, statusCodeSuccess);
     },
@@ -94,6 +99,34 @@ module.exports = {
     },
 
 
+    addUser(user){
+        var userObj = user;
+        if(!user.header_url){
+            var header_url = 'null';
+        }
+        userObj.age = this.getAge(userObj.birthday);
+        userObj.createtime = this.getCurrentTime();
+        userObj.birthday = userObj.birthday.split('T')[0];
+        var randomUserId = 'userId_' + parseInt((Math.random(10) * 100000000000000000000));
+        userObj.user_id = randomUserId;
+        console.log('mysql registe recived params: ', userObj);
+        Object.setPrototypeOf(userObj, new Object());
+        var querySentence = `INSERT INTO users(user_id, username, account, password, age, birthday, createtime, header_url, role)
+                            VALUES(${'\'' + userObj.user_id + '\''}, 
+                                   ${'\'' + userObj.username + '\''}, 
+                                   ${'\'' + userObj.account + '\''}, 
+                                   ${'\'' + userObj.password + '\''}, 
+                                   ${userObj.age}, 
+                                   ${'\'' + userObj.birthday + '\''}, 
+                                   ${'\'' + userObj.createtime + '\''},
+                                   ${'\'' + header_url + '\''}, 
+                                   ${'\'' + userObj.role + '\''});
+                                   `;
+        var statusCodeSuccess = statusCodeEnum.INSERT_SUCCESS;
+        console.log(querySentence);
+        return this.generalGet(querySentence, statusCodeSuccess);
+    },
+
     /**
      * 帖子相关查询
      */
@@ -117,7 +150,15 @@ module.exports = {
     },
 
     getAllPosts(){
-        var querySentence = `SELECT * FROM posts`;
+        var querySentence = `SELECT username, post_id, post_title,  post_body, post_time,post_coverimg FROM users, posts WHERE users.user_id=posts.user_id`;
+        var statusCodeSuccess = statusCodeEnum.GET_SUCCESS;
+        return this.generalGet(querySentence, statusCodeSuccess);
+    },
+
+    getPostsByUserId(user_id){
+        var querySentence = `SELECT username, post_id, post_title, post_body, post_time, post_coverimg FROM users, posts WHERE
+                            users.user_id=${'\'' + user_id + '\''} AND posts.user_id=${'\'' + user_id + '\''};
+                            `;
         var statusCodeSuccess = statusCodeEnum.GET_SUCCESS;
         return this.generalGet(querySentence, statusCodeSuccess);
     },
@@ -149,12 +190,29 @@ module.exports = {
         return this.generalGet(querySentence, statusCodeSuccess);
     },
 
-    getComment: function(post_id){
+    getCommentByPostId: function(post_id){
         var statusCodeSuccess = statusCodeEnum.SUCCESS;
         var querySentence = `SELECT * FROM comments WHERE post_id=${'\'' + post_id + '\''}`;
         return this.generalGet(querySentence, statusCodeSuccess);
     },
 
+    getCommentByUserId: function(user_id){
+        var statusCodeSuccess = statusCodeEnum.SUCCESS;
+        var querySentence = `SELECT * FROM comments WHERE user_id=${'\'' + user_id + '\''}`;
+        return this.generalGet(querySentence, statusCodeSuccess);
+    },
+
+    getAllComments: function(){
+        var statusCodeSuccess = statusCodeEnum.SUCCESS;
+        var querySentence = `SELECT * FROM comments`;
+        return this.generalGet(querySentence, statusCodeSuccess);
+    },
+
+    deleteComment: function (comment_id){
+        var statusCodeSuccess = statusCodeEnum.SUCCESS;
+        var querySentence = `DELETE FROM comments WHERE comment_id=${'\'' + comment_id + '\''}`;
+        return this.generalGet(querySentence, statusCodeSuccess);
+    },
 
     generalGet: function (querySentence, statusCodeSuccess, statusCodeFaild){
         console.log(chalk.magentaBright('recived query: ', querySentence));
@@ -192,8 +250,21 @@ module.exports = {
 
         return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
     },
+    formatDateTime(date){
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+        var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+        var hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
+        var minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+        var seconds = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
+
+        return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+    },
     forMatDate(date){
         var newDate = date;
         return newDate.split('T')[0];
+    },
+    getAge(birthday){
+        return new Date().getFullYear() - parseInt(birthday.split('T')[0].split('-')[0]);
     }
 }

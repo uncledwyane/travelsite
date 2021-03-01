@@ -175,6 +175,14 @@ app.post('/deletepost', function (req, res){
     })
 })
 
+
+app.post('/updatepost', function (req, res){
+    console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.body)));
+    mysqls.modifyPost(req.body).then(function (result){
+        res.send(result);
+    })
+})
+
 /**
  * 评论xiangg
  */
@@ -197,6 +205,13 @@ app.get('/getcomment', function(req, res){
 app.get('/getcommentwithuser', function(req, res){
     console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.query)));
     mysqls.getCommentByUserId(req.query.user_id).then(function (result){
+        res.send(result);
+    })
+})
+
+app.post('/updatecomment', function(req, res){
+    console.log(chalk.yellow('+++ api: /pushcomment, req.body', JSON.stringify(req.body)));
+    mysqls.modifyComment(req.body).then(function (result){
         res.send(result);
     })
 })

@@ -171,6 +171,21 @@ module.exports = {
         return this.generalGet(querySentence, statusCodeSuccess);
     },
 
+    modifyPost(post){
+        var statusCodeSuccess = statusCodeEnum.SUCCESS;
+        var post_id = post.post_id;
+        return new Promise(function(resolve, reject){
+            for(var i in post){
+                var querySentence = `UPDATE posts SET ${i}=${'\'' + post[i] + '\''} WHERE post_id=${'\'' + post_id + '\''}`;
+                connection.query(querySentence, function (error, results, fields){
+                    if(results){
+                        return resolve(statusCodeSuccess);
+                    }
+                })
+            }
+        })
+    },
+
 
 
     /**
@@ -213,6 +228,16 @@ module.exports = {
         var querySentence = `DELETE FROM comments WHERE comment_id=${'\'' + comment_id + '\''}`;
         return this.generalGet(querySentence, statusCodeSuccess);
     },
+
+
+    modifyComment: function(comment){
+        var statusCodeSuccess = statusCodeEnum.SUCCESS;
+        var comment_id = comment.comment_id;
+        var comment_body = comment.comment_body;
+        var querySentence = `UPDATE comments SET comment_body=${'\'' + comment_body + '\''} WHERE comment_id=${'\'' + comment_id + '\''}`;
+        return this.generalGet(querySentence, statusCodeSuccess);
+    },
+
 
     generalGet: function (querySentence, statusCodeSuccess, statusCodeFaild){
         console.log(chalk.magentaBright('recived query: ', querySentence));

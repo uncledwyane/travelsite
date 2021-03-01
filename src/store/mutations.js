@@ -19,8 +19,20 @@ const mutations = {
     setIsshowEdit(state, value){
         state.isShowEdit = value;
     },
+    setIsShowPostEdit(state, value){
+        state.isShowPostEdit = value;
+    },
+    setIsShowCommentEdit(state, value){
+        state.isShowCommentEdit = value;
+    },
     setIsshowAdd(state, value){
         state.isShowAdd = value;
+    },
+    setEditPost(state, post){
+        state.editPost = post;
+    },
+    setEditComment(state, post){
+        state.editComment = post;
     },
     logout(state){
         var self = this;

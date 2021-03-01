@@ -8,17 +8,19 @@
                     }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="姓名" width="100">
+            <el-table-column label="姓名" width="150">
                 <template slot-scope="scope">
-                    <span style="margin-left: 10px">{{ scope.row.username }}</span>
+                    <span style="margin-left: 10px">{{
+                        scope.row.username | isSelf(scope.row.username)
+                    }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="账号" width="100">
+            <el-table-column label="账号" width="150">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{ scope.row.account }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="密码" width="100">
+            <el-table-column label="密码" width="150">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{ scope.row.password }}</span>
                 </template>
@@ -33,14 +35,14 @@
                     <span style="margin-left: 10px">{{ scope.row.user_id }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="用户角色" width="100">
+            <el-table-column label="用户角色" width="110">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{
                         scope.row.role | filterRole(scope.row.role)
                     }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="创建时间" width="220">
+            <el-table-column label="创建时间" width="240">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{ scope.row.createtime }}</span>
                 </template>
@@ -85,6 +87,11 @@ export default {
         },
         filterRole(role) {
             return role == "admin" ? "管理员" : "普通用户";
+        },
+        isSelf(username) {
+            return username == JSON.parse(localStorage.getItem("currentUser")).username
+                ? username + "(自己)"
+                : username;
         },
     },
     data() {

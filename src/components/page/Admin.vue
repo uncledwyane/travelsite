@@ -78,14 +78,16 @@ export default {
     box-sizing: border-box;
     margin: 20px auto;
     border: 1px solid #dcdfe6;
+    border-radius: 10px;
+    overflow: hidden;
 }
 .admin-options {
-    width: 18%;
+    width: 10%;
     // height: 100%;
     background: #545c64;
 }
 .option-content {
-    width: 82%;
+    width: 90%;
     height: 100%;
     box-sizing: border-box;
     padding: 10px;

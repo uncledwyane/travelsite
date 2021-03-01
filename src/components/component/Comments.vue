@@ -13,7 +13,7 @@
                     <span style="margin-left: 10px">{{ scope.row.post_id }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="评论内容" width="550">
+            <el-table-column label="评论内容" width="650">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{ scope.row.comment_body }}岁</span>
                 </template>
@@ -36,6 +36,8 @@
 </template>
 
 <script>
+import { mapMutations } from "vuex";
+import bus from "@/components/bus";
 export default {
     data() {
         return {
@@ -50,23 +52,22 @@ export default {
     },
     created() {
         var self = this;
-        var user = JSON.parse(localStorage.getItem("currentUser"));
-        if (user.role == "admin") {
-            self.$axios.get("/allcomments").then(function (res) {
-                self.comments = res.data.data;
-            });
-        } else {
-            self.$axios
-                .get("/getcommentwithuser", { params: { user_id: user.user_id } })
-                .then(function (res) {
-                    self.comments = res.data.data;
-                });
-        }
+        self.getAllComments();
     },
-    mounted() {},
+    mounted() {
+        var self = this;
+        bus.$on("updateallcomments", function () {
+            self.getAllComments();
+        });
+    },
     updated() {},
     methods: {
-        handleEdit(index, row) {},
+        ...mapMutations(["setIsShowCommentEdit", "setEditComment"]),
+        handleEdit(index, row) {
+            var self = this;
+            self.setIsShowCommentEdit(true);
+            self.setEditComment(row);
+        },
         handleDelete(index, row) {
             var self = this;
             var params = {
@@ -85,6 +86,21 @@ export default {
                     self.comments.splice(index, 1);
                 });
             });
+        },
+        getAllComments() {
+            var self = this;
+            var user = JSON.parse(localStorage.getItem("currentUser"));
+            if (user.role == "admin") {
+                self.$axios.get("/allcomments").then(function (res) {
+                    self.comments = res.data.data;
+                });
+            } else {
+                self.$axios
+                    .get("/getcommentwithuser", { params: { user_id: user.user_id } })
+                    .then(function (res) {
+                        self.comments = res.data.data;
+                    });
+            }
         },
     },
 };

@@ -7,14 +7,32 @@
             @click="showPostview(post)"
         >
             <div class="post-img">
-                <img
+                <!-- <img
                     :src="
                         post.post_coverimg
                             ? post.post_coverimg
                             : 'https://s3.ax1x.com/2021/02/24/yLvUfJ.png'
                     "
                     class="post-image"
-                />
+                /> -->
+                <el-image :src="post.post_coverimg" class="post-image" lazy>
+                    <div
+                        slot="error"
+                        class="image-slot myslot"
+                        style="
+                            width: 100%;
+                            height: 100%;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            font-size: 40px;
+                            color: grey;
+                            background: rgb(230, 230, 230);
+                        "
+                    >
+                        <i class="el-icon-picture-outline"></i>
+                    </div>
+                </el-image>
             </div>
             <div class="post-info">
                 <div class="post-title">
@@ -73,6 +91,7 @@ export default {
 }
 .post-img {
     width: 40%;
+    height: 100%;
     overflow: hidden;
     box-sizing: border-box;
     padding: 0 10px 0 5px;
@@ -83,6 +102,7 @@ export default {
 }
 .post-image {
     width: 100%;
+    height: 100%;
 }
 .post-title {
     height: 150px;
@@ -118,5 +138,16 @@ export default {
     overflow: hidden;
     height: 100px;
     text-overflow: ellipsis;
+}
+.image-slot {
+    width: 100%;
+    height: 100%;
+    /* text-align: center; */
+    /* line-height: 100%; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+    color: rgb(230, 230, 230);
 }
 </style>

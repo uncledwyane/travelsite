@@ -1,7 +1,7 @@
 <template>
     <div id="posts-manage">
         <el-table :data="posts" style="width: 100%" border stripe>
-            <el-table-column label="发布者" width="100">
+            <el-table-column label="发布者" width="150">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{ scope.row.username }}</span>
                 </template>
@@ -11,7 +11,7 @@
                     <span style="margin-left: 10px">{{ scope.row.post_title }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="帖子内容" width="500">
+            <el-table-column label="帖子内容" width="640">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{ scope.row.post_body }}岁</span>
                 </template>
@@ -21,7 +21,7 @@
                     <span style="margin-left: 10px">{{ scope.row.post_time }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="帖子封面" width="220">
+            <el-table-column label="帖子封面" width="230">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{ scope.row.post_coverimg }}</span>
                 </template>
@@ -45,6 +45,7 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import bus from "@/components/bus";
 export default {
     data() {
         return {
@@ -60,26 +61,24 @@ export default {
             return self.getUserName(user_id);
         },
     },
-    mounted() {},
+    mounted() {
+        var self = this;
+        bus.$on("updateallposts", function () {
+            self.getPosts();
+        });
+    },
     created() {
         var self = this;
-        console.log("updated");
-        var user = JSON.parse(localStorage.getItem("currentUser"));
-        if (user.role == "admin") {
-            self.$axios.get("/allposts").then(function (res) {
-                self.posts = res.data.data;
-            });
-        } else {
-            self.$axios
-                .get("/postswithuser", { params: { user_id: user.user_id } })
-                .then(function (res) {
-                    self.posts = res.data.data;
-                });
-        }
+        self.getPosts();
     },
     methods: {
-        ...mapMutations(["setAllposts"]),
-        handleEdit(index, row) {},
+        ...mapMutations(["setAllposts", "setIsShowPostEdit", "setEditPost"]),
+        handleEdit(index, row) {
+            var self = this;
+            console.log("handleEdit click:", row);
+            self.setEditPost(row);
+            self.setIsShowPostEdit(true);
+        },
         handleDelete(index, row) {
             var self = this;
             var postId = row.post_id;
@@ -118,6 +117,21 @@ export default {
                 .then(function (res) {
                     return res.data[0].username;
                 });
+        },
+        getPosts() {
+            var self = this;
+            var user = JSON.parse(localStorage.getItem("currentUser"));
+            if (user.role == "admin") {
+                self.$axios.get("/allposts").then(function (res) {
+                    self.posts = res.data.data;
+                });
+            } else {
+                self.$axios
+                    .get("/postswithuser", { params: { user_id: user.user_id } })
+                    .then(function (res) {
+                        self.posts = res.data.data;
+                    });
+            }
         },
     },
 };

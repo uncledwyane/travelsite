@@ -5,8 +5,12 @@ var state = {
     currentPost: null,
     isShowPostview: false,
     isShowEdit: false,
+    isShowPostEdit: false,
+    isShowCommentEdit: false,
     editUser: null,
-    isShowAdd: false
+    isShowAdd: false,
+    editPost: null,
+    editComment: null
 }
 
 export default state

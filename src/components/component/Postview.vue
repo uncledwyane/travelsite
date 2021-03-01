@@ -8,12 +8,24 @@
             </div>
             <div class="post-body">
                 <div class="post-img">
-                    <img
-                        :src="post.post_coverimg"
-                        alt=""
-                        v-if="post.post_coverimg != null"
-                        class="post-image"
-                    />
+                    <el-image :src="post.post_coverimg" style="width: 100%">
+                        <div
+                            slot="error"
+                            class="image-slot"
+                            style="
+                                width: 100%;
+                                height: 300px;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                font-size: 40px;
+                                color: grey;
+                                background: rgb(230, 230, 230);
+                            "
+                        >
+                            <i class="el-icon-picture-outline"></i>
+                        </div>
+                    </el-image>
                 </div>
                 <p class="post-content">
                     {{ post.post_body }}
@@ -23,7 +35,7 @@
                         <el-form-item label="发表评论">
                             <el-input v-model="comment"></el-input>
                         </el-form-item>
-                        <el-form-item>
+                        <el-form-item v-show="comment != ''">
                             <el-button type="primary" @click="pushcomment"
                                 >发表</el-button
                             >

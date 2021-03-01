@@ -10,7 +10,7 @@
                 :key="comment.comment_id"
             >
                 <div class="user-info">
-                    <span class="username">{{ comment.user_id }}</span>
+                    <span class="username">{{ comment.user_id }} :</span>
                 </div>
                 <div class="comment">
                     <p class="comment-content">{{ comment.comment_body }}</p>
@@ -61,30 +61,32 @@ export default {
 .comment-body {
     width: 100%;
     list-style: none;
-    height: 70px;
+    height: 100px;
     display: flex;
+    flex-direction: column;
     box-sizing: border-box;
-    padding: 5px;
-    border-radius: 10px;
-    border: 2px dotted #ff5900;
+    padding: 5px 10px;
+    /* border-radius: 10px; */
+    border-bottom: 2px dotted #ff5900;
     margin-bottom: 10px;
 }
 .user-info {
-    width: 20%;
-    height: 100%;
+    width: 100%;
+    height: 30%;
     display: flex;
     align-items: center;
     /* justify-content: center; */
     text-align: center;
     overflow: hidden;
+    color: grey;
 }
 .comment {
-    width: 80%;
-    height: 100%;
+    width: 100%;
+    height: 70%;
     display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding-left: 20px;
+    /* align-items: center; */
+    /* justify-content: flex-start; */
+    /* padding-left: 20px; */
     overflow: hidden;
     text-overflow: ellipsis;
 }

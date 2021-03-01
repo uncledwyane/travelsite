@@ -34,13 +34,21 @@
         <transition name="component">
             <edit-user v-if="isShowEdit"></edit-user>
         </transition>
+        <transition name="component">
+            <edit-post v-if="isShowPostEdit"></edit-post>
+        </transition>
+        <transition name="component">
+            <edit-comment v-if="isShowCommentEdit"></edit-comment>
+        </transition>
     </div>
 </template>
 
 <script>
 import Postview from "@/components/component/Postview";
 import EditUser from "@/components/component/EditUser";
+import EditPost from "@/components/component/EditPost";
 import AddUser from "@/components/component/AddUser";
+import EditComment from "@/components/component/EditComment";
 import { mapState, mapMutations } from "vuex";
 import bus from "@/components/bus";
 export default {
@@ -74,7 +82,15 @@ export default {
         };
     },
     computed: {
-        ...mapState(["isLogin", "allPosts", "isShowPostview", "isShowEdit", "isShowAdd"]),
+        ...mapState([
+            "isLogin",
+            "allPosts",
+            "isShowPostview",
+            "isShowEdit",
+            "isShowAdd",
+            "isShowPostEdit",
+            "isShowCommentEdit",
+        ]),
     },
     created() {
         var self = this;
@@ -105,6 +121,8 @@ export default {
         Postview,
         EditUser,
         AddUser,
+        EditPost,
+        EditComment,
     },
     methods: {
         ...mapMutations(["setAllposts"]),
@@ -209,5 +227,16 @@ export default {
 }
 .component-enter-to {
     opacity: 1;
+}
+.image-slot {
+    width: 100%;
+    height: 100%;
+    /* text-align: center; */
+    /* line-height: 100%; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+    color: grey;
 }
 </style>

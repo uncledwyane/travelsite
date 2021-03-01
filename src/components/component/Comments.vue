@@ -15,7 +15,7 @@
             </el-table-column>
             <el-table-column label="评论内容" width="650">
                 <template slot-scope="scope">
-                    <span style="margin-left: 10px">{{ scope.row.comment_body }}岁</span>
+                    <span style="margin-left: 10px">{{ scope.row.comment_body }}</span>
                 </template>
             </el-table-column>
             <el-table-column label="操作" fixed="right" width="160">

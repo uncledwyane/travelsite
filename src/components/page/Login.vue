@@ -127,15 +127,19 @@ export default {
             params.age =
                 new Date().getFullYear() - parseInt(params.birthday.split("-")[0]);
             console.log(params);
-            self.$axios.post("/registe", params).then(function (res) {
-                if (res.data.code == 3000) {
-                    self.$message({
-                        message: "注册成功，请登录！",
-                        type: "success",
-                    });
-                    self.state = "login";
-                }
-            });
+            if (params.username && params.account && params.password) {
+                self.$axios.post("/registe", params).then(function (res) {
+                    if (res.data.code == 3000) {
+                        self.$message({
+                            message: "注册成功，请登录！",
+                            type: "success",
+                        });
+                        self.state = "login";
+                    }
+                });
+            } else {
+                self.$message.error("请输入必要信息！");
+            }
         },
         changeState(state) {
             var self = this;

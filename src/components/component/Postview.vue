@@ -30,6 +30,35 @@
                 <p class="post-content">
                     {{ post.post_body }}
                 </p>
+                <div class="star-collect">
+                    <div class="middle"></div>
+                    <div class="right">
+                        <div class="star">
+                            <span
+                                class="icon icon-star"
+                                v-show="isStar"
+                                @click="cancelStar"
+                            ></span>
+                            <span
+                                class="icon icon-unstar"
+                                v-show="!isStar"
+                                @click="excuteStar"
+                            ></span>
+                        </div>
+                        <div class="collect">
+                            <span
+                                class="icon icon-collect"
+                                v-show="isCollect"
+                                @click="cancelCollect"
+                            ></span>
+                            <span
+                                class="icon icon-uncollect"
+                                v-show="!isCollect"
+                                @click="excuteCollect"
+                            ></span>
+                        </div>
+                    </div>
+                </div>
                 <div class="pushComment">
                     <el-form>
                         <el-form-item label="发表评论">
@@ -79,19 +108,80 @@ export default {
             },
             username: "",
             comment: "",
+            isStar: false,
+            isCollect: false,
         };
     },
     computed: {
-        ...mapState(["isShowPostview", "currentPost"]),
+        ...mapState([
+            "isShowPostview",
+            "currentPost",
+            "currentUserStar",
+            "currentUserCollect",
+        ]),
     },
     created() {
         var self = this;
     },
     mounted() {
         var self = this;
+        bus.$on("setIsStar", function (value) {
+            console.log("setIsStar bus on: ", value);
+            self.isStar = value;
+        });
+        bus.$on("setIsCollect", function (value) {
+            console.log("setIsCollect bus on: ", value);
+            self.isCollect = value;
+        });
     },
     methods: {
         ...mapMutations(["updateShowPostviewState"]),
+        excuteStar() {
+            var self = this;
+            var params = {
+                post_id: self.post.post_id,
+                user_id: JSON.parse(localStorage.getItem("currentUser")).user_id,
+            };
+            if (!self.isStar) {
+                self.$axios.post("/star", params).then(function (res) {
+                    self.isStar = true;
+                    bus.$emit("updateStarsAndCollects");
+                });
+            }
+        },
+        excuteCollect() {
+            var self = this;
+            var params = {
+                post_id: self.post.post_id,
+                user_id: JSON.parse(localStorage.getItem("currentUser")).user_id,
+            };
+            if (!self.isCollect) {
+                self.$axios.post("/collect", params).then(function (res) {
+                    self.isCollect = true;
+                    bus.$emit("updateStarsAndCollects");
+                });
+            }
+        },
+        cancelStar() {
+            var self = this;
+            var params = {
+                post_id: self.post.post_id,
+            };
+            self.$axios.post("/cancelstar", params).then(function (res) {
+                self.isStar = false;
+                bus.$emit("updateStarsAndCollects");
+            });
+        },
+        cancelCollect() {
+            var self = this;
+            var params = {
+                post_id: self.post.post_id,
+            };
+            self.$axios.post("/cancelcollect", params).then(function (res) {
+                self.isCollect = false;
+                bus.$emit("updateStarsAndCollects");
+            });
+        },
         pushcomment() {
             var self = this;
             var commentContent = self.comment;
@@ -194,6 +284,9 @@ export default {
 }
 .post-content {
     line-height: 30px;
+    text-align: justify;
+    text-indent: 2em;
+    padding: 5px;
 }
 .close-btn {
     width: 30px;
@@ -212,6 +305,53 @@ export default {
     margin: 20px 0;
     padding: 20px;
     border-radius: 10px;
-    border: 1px dotted grey;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+.star-collect {
+    width: 100%;
+    display: flex;
+    height: 40px;
+}
+.middle {
+    width: 80%;
+}
+.right {
+    width: 20%;
+    display: flex;
+}
+.star,
+.collect {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.icon {
+    display: block;
+    width: 40px;
+    height: 40px;
+}
+.icon:hover {
+    cursor: pointer;
+}
+.icon-star {
+    background: url("../../../assets/icon/star.png");
+    background-size: 40px 40px;
+}
+.icon-star:hover {
+    background: url("../../../assets/icon/star.png");
+    background-size: 40px 40px;
+}
+.icon-unstar {
+    background: url("../../../assets/icon/unstar.png");
+    background-size: 40px 40px;
+}
+.icon-collect {
+    background: url("../../../assets/icon/collected.png");
+    background-size: 40px 40px;
+}
+.icon-uncollect {
+    background: url("../../../assets/icon/uncollected.png");
+    background-size: 40px 40px;
 }
 </style>

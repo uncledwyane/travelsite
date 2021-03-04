@@ -2,6 +2,7 @@
 var state = {
     isLogin: false,
     allPosts: null,
+    allLatestPosts: null,
     currentPost: null,
     isShowPostview: false,
     isShowEdit: false,
@@ -10,7 +11,9 @@ var state = {
     editUser: null,
     isShowAdd: false,
     editPost: null,
-    editComment: null
+    editComment: null,
+    currentUserStar: null,
+    currentUserCollect: null
 }
 
 export default state

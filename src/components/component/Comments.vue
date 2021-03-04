@@ -42,6 +42,7 @@ export default {
     data() {
         return {
             comments: null,
+            allusers: null,
         };
     },
     filters: {
@@ -53,6 +54,10 @@ export default {
     created() {
         var self = this;
         self.getAllComments();
+        self.$axios.get("/alluser").then(function (res) {
+            self.allusers = res.data.data;
+            console.log(self.allusers);
+        });
     },
     mounted() {
         var self = this;

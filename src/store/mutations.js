@@ -7,6 +7,9 @@ const mutations = {
     setAllposts(state, value){
         state.allPosts = value;
     },
+    setAllLatestPosts(state, value){
+        state.allLatestPosts = value;
+    },
     updateCurrentPost(state, value){
         state.currentPost = value;
     },
@@ -41,6 +44,25 @@ const mutations = {
         localStorage.removeItem("isLogin");
         localStorage.removeItem("currentNav");
         location.reload();
+    },
+
+    setCurrentUserStar(state, stars){
+        var tempStars = new Array();
+        if(stars && stars.length >= 0){
+            stars.forEach(star => {
+                tempStars.push(star.post_id);
+            })
+        }
+        state.currentUserStar = tempStars;
+    },
+    setCurrentUserCollect(state, collects){
+        var tempCollects = new Array();
+        if(collects && collects.length >= 0){
+            collects.forEach(collect => {
+                tempCollects.push(collect.post_id);
+            })
+        }
+        state.currentUserCollect = tempCollects;
     }
 }
 

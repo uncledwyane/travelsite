@@ -13,8 +13,16 @@
                 </div>
             </div>
             <div class="user-info" v-if="loginState">
-                <div class="user-name">
+                <div class="user-name" v-show="header == '' || header == 'null'">
                     {{ currentUserName }}
+                </div>
+                <div class="user-header" v-show="header != 'null'">
+                    <!-- <el-image
+                        style="width: 50px; height: 50px; border-radius: 50%"
+                        :src="header"
+                        contain
+                    ></el-image> -->
+                    <el-avatar :src="header"></el-avatar>
                 </div>
                 <div class="leave" style="margin-left: 10px">
                     <el-button type="warning" round @click="logout">退出</el-button>
@@ -22,9 +30,13 @@
             </div>
         </div>
         <div id="content">
-            <router-view></router-view>
+            <transition name="page" mode="out-in">
+                <router-view></router-view>
+            </transition>
         </div>
-        <div id="bottom-info" v-if="loginState"></div>
+        <div id="bottom-info" v-if="loginState">
+            <p>转载内容版权归作者及来源网站所有，本站原创内容转载请注明来源</p>
+        </div>
         <transition name="component">
             <add-user v-show="isShowAdd"></add-user>
         </transition>
@@ -57,22 +69,23 @@ export default {
             currentNav: "home",
             loginState: false,
             currentUserName: "",
+            header: "",
             navs: [
                 {
                     name: "home",
                     showName: "首页",
                     path: "/home",
                 },
-                {
-                    name: "seize",
-                    showName: "攻略",
-                    path: "/seize",
-                },
-                {
-                    name: "comm",
-                    showName: "社区",
-                    path: "/comm",
-                },
+                // {
+                //     name: "seize",
+                //     showName: "攻略",
+                //     path: "/seize",
+                // },
+                // {
+                //     name: "comm",
+                //     showName: "社区",
+                //     path: "/comm",
+                // },
                 {
                     name: "admin",
                     showName: "后台",
@@ -90,6 +103,7 @@ export default {
             "isShowAdd",
             "isShowPostEdit",
             "isShowCommentEdit",
+            "allLatestPosts",
         ]),
     },
     created() {
@@ -99,9 +113,9 @@ export default {
     mounted() {
         var self = this;
         if (localStorage.getItem("currentUser")) {
-            self.currentUserName = JSON.parse(
-                localStorage.getItem("currentUser")
-            ).username;
+            var user = JSON.parse(localStorage.getItem("currentUser"));
+            self.currentUserName = user.username;
+            self.header = user.header_url;
         }
         bus.$on("loginStateChange", function (state) {
             self.loginState = state;
@@ -109,10 +123,18 @@ export default {
         bus.$on("username", function (name) {
             self.currentUserName = name;
         });
+        bus.$on("updateStarsAndCollects", function () {
+            self.getStarsAndCollects();
+        });
         self.$axios.get("/allposts").then(function (res) {
             self.setAllposts(res.data.data);
             console.log("allPosts: ", self.allPosts);
         });
+        self.$axios.get("/allpostslatest").then(function (res) {
+            self.setAllLatestPosts(res.data.data);
+            console.log("allLatestPosts: ", self.allLatestPosts);
+        });
+        self.getStarsAndCollects();
         if (localStorage.getItem("currentNav")) {
             self.goTo("/" + localStorage.getItem("currentNav"));
         }
@@ -125,7 +147,12 @@ export default {
         EditComment,
     },
     methods: {
-        ...mapMutations(["setAllposts"]),
+        ...mapMutations([
+            "setAllposts",
+            "setAllLatestPosts",
+            "setCurrentUserStar",
+            "setCurrentUserCollect",
+        ]),
         goTo(path) {
             var self = this;
             var name = path.substr(1, path.length - 1);
@@ -136,6 +163,30 @@ export default {
             var self = this;
             self.currentNav = navName;
             localStorage.setItem("currentNav", navName);
+        },
+        getStarsAndCollects() {
+            var self = this;
+            self.$axios
+                .get("/allstars", {
+                    params: {
+                        user_id: JSON.parse(localStorage.getItem("currentUser")).user_id,
+                    },
+                })
+                .then(function (res) {
+                    console.log("allstarts ", res.data.data);
+                    self.setCurrentUserStar(res.data.data);
+                });
+
+            self.$axios
+                .get("/allcollects", {
+                    params: {
+                        user_id: JSON.parse(localStorage.getItem("currentUser")).user_id,
+                    },
+                })
+                .then(function (res) {
+                    console.log("allcollects ", res.data.data);
+                    self.setCurrentUserCollect(res.data.data);
+                });
         },
         logout() {
             var self = this;
@@ -176,6 +227,7 @@ export default {
 .navs {
     width: 50%;
     display: flex;
+    justify-content: center;
 }
 .nav-item {
     width: 25%;
@@ -201,6 +253,10 @@ export default {
 #bottom-info {
     width: 100%;
     height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(167, 167, 167);
     background: rgb(56, 56, 56);
 }
 .user-info {
@@ -238,5 +294,22 @@ export default {
     align-items: center;
     font-size: 40px;
     color: grey;
+}
+.page-enter-active,
+.page-leave-active {
+    transition: all ease 0.3s;
+}
+.page-enter,
+.page-leave-to {
+    // transform: translateX(100vw);
+    opacity: 0;
+}
+.page-enter-to {
+    opacity: 1;
+}
+.user-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 </style>

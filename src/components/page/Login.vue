@@ -19,6 +19,13 @@
             <span class="state-change" style="color: grey" @click="changeState('registe')"
                 >注册</span
             >
+            <span
+                class="state-change"
+                style="color: red; float: right"
+                @click="findPass"
+                v-show="showFindPass"
+                >找回密码</span
+            >
         </div>
         <div id="registe" class="form" v-show="state == 'registe'">
             <div class="title title-registe">{{ title.registe }}</div>
@@ -65,6 +72,7 @@ export default {
             password: "",
             account: "",
             birthday: "",
+            showFindPass: false,
             title: {
                 login: "登录",
                 registe: "注册 ",
@@ -76,6 +84,21 @@ export default {
     },
     methods: {
         ...mapMutations(["setLoginState"]),
+        findPass() {
+            var self = this;
+            if (self.account) {
+                var params = {
+                    account: self.account,
+                };
+                self.$axios.get("/getpass", { params: params }).then(function (res) {
+                    console.log(res.data);
+                    self.$message({
+                        type: "success",
+                        message: "找回密码成功！您的密码是：" + res.data.data[0].password,
+                    });
+                });
+            }
+        },
         login() {
             var self = this;
             if (!self.account || !self.password) {
@@ -94,6 +117,7 @@ export default {
                         console.log("is esist data", data);
                         if (self.password !== data.data[0].password) {
                             self.$message.error("密码错误，请重新输入！");
+                            self.showFindPass = true;
                         } else if (self.password === data.data[0].password) {
                             self.setLoginState(true);
                             localStorage.setItem("isLogin", true);
@@ -110,6 +134,10 @@ export default {
                             self.$router.push("/home");
                         } else {
                         }
+                    } else if (data.code == 2003) {
+                        self.$message.error(
+                            "登录失败！该账户已被管理员冻结，请联系管理员！"
+                        );
                     }
                 });
             }

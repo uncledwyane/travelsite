@@ -36,8 +36,15 @@
             </div>
             <div class="post-info">
                 <div class="post-title">
-                    <h3>{{ post.post_title }}</h3>
-                    <p class="post-body">{{ post.post_body }}</p>
+                    <h3 style="font-size: 15px">{{ post.post_title }}</h3>
+                    <p class="post-body" style="color: grey; font-size: 12px">
+                        {{ post.post_body }}
+                    </p>
+                </div>
+                <div class="post-detail-info">
+                    <p class="post-time" style="color: lightgrey; font-size: 12px">
+                        {{ post.post_time }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -46,6 +53,7 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import bus from "@/components/bus";
 export default {
     data() {
         return {
@@ -53,12 +61,27 @@ export default {
         };
     },
     computed: {
-        ...mapState(["allPosts"]),
+        ...mapState(["allPosts", "currentUserStar", "currentUserCollect"]),
     },
     methods: {
         ...mapMutations(["updateCurrentPost", "updateShowPostviewState"]),
         showPostview(postObj) {
             var self = this;
+            if (self.currentUserStar && self.currentUserStar.length > 0) {
+                if (self.currentUserStar.indexOf(postObj.post_id) > -1) {
+                    bus.$emit("setIsStar", true);
+                } else {
+                    bus.$emit("setIsStar", false);
+                }
+            }
+
+            if (self.currentUserCollect && self.currentUserCollect.length > 0) {
+                if (self.currentUserCollect.indexOf(postObj.post_id) > -1) {
+                    bus.$emit("setIsCollect", true);
+                } else {
+                    bus.$emit("setIsCollect", false);
+                }
+            }
             self.updateCurrentPost(postObj);
             self.updateShowPostviewState(true);
         },
@@ -111,6 +134,7 @@ export default {
     width: 60%;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 .post-by {
     height: 50px;
@@ -149,5 +173,10 @@ export default {
     align-items: center;
     font-size: 40px;
     color: rgb(230, 230, 230);
+}
+.post-detail-info {
+    position: absolute;
+    bottom: 0;
+    right: 0px;
 }
 </style>

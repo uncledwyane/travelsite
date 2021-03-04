@@ -49,7 +49,8 @@ export default {
 
 <style lang="scss" scoped>
 #comment-list-wrap {
-    width: 95%;
+    width: 95% !important;
+    border: 1px solid rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
     padding: 10px;
     border-radius: 10px;
@@ -67,7 +68,7 @@ export default {
     box-sizing: border-box;
     padding: 5px 10px;
     /* border-radius: 10px; */
-    border-bottom: 2px dotted #ff5900;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     margin-bottom: 10px;
 }
 .user-info {

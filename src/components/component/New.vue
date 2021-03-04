@@ -1,96 +1,173 @@
 <template>
-  <div id="post-wrap">
-      <div id="post-item">
-          <div class="post-img">
-              <img src="https://ns-strategy.cdn.bcebos.com/ns-strategy/upload/fc_big_pic/part-00447-50.jpg" class="post-image">
-          </div>
-          <div class="post-info">
-              <div class="post-title">
-                  <h3>标题</h3>
-                  <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Facilis voluptas, optio quas fuga sunt deserunt obcaecati. Minima praesentium totam itaque repellat obcaecati est facere explicabo delectus! Esse veniam dolorem unde.</p>
-              </div>
-              <div class="post-by">
-                  <div class="location">
-                      <i class="el-icon-location-outline"></i>
-                      <span>上海</span>
-                  </div>
-                  <div class="username">
-                      <span>昵称</span>
-                  </div>
-                  <div class="collect">
-                      <img src="../../../assets/icon/star_off.png" alt="" class="collect-star" :class="{'star-on': isSelect == true}" @click="collect">
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
+    <div id="post-wrap">
+        <div
+            id="post-item"
+            v-for="post in allLatestPosts"
+            :key="post.post_id"
+            @click="showPostview(post)"
+        >
+            <div class="post-img">
+                <!-- <img
+                    :src="
+                        post.post_coverimg
+                            ? post.post_coverimg
+                            : 'https://s3.ax1x.com/2021/02/24/yLvUfJ.png'
+                    "
+                    class="post-image"
+                /> -->
+                <el-image :src="post.post_coverimg" class="post-image" lazy>
+                    <div
+                        slot="error"
+                        class="image-slot myslot"
+                        style="
+                            width: 100%;
+                            height: 100%;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            font-size: 40px;
+                            color: grey;
+                            background: rgb(230, 230, 230);
+                        "
+                    >
+                        <i class="el-icon-picture-outline"></i>
+                    </div>
+                </el-image>
+            </div>
+            <div class="post-info">
+                <div class="post-title">
+                    <h3 style="font-size: 15px">{{ post.post_title }}</h3>
+                    <p class="post-body" style="color: grey; font-size: 12px">
+                        {{ post.post_body }}
+                    </p>
+                    <div class="post-detail-info">
+                        <p class="post-time" style="color: lightgrey; font-size: 12px">
+                            {{ post.post_time }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
+import { mapState, mapMutations } from "vuex";
 export default {
-    data () {
+    data() {
         return {
-            isSelect: false
-        }
+            isSelect: false,
+            latestPosts: {
+                post_title: "",
+                post_body: "",
+                post_coverimg: "",
+                post_id: "",
+            },
+        };
     },
+    computed: {
+        ...mapState(["allLatestPosts"]),
+    },
+    created() {},
     methods: {
-        collect(){
-            
-        }
-    }
-}
+        ...mapMutations(["updateCurrentPost", "updateShowPostviewState"]),
+        showPostview(postObj) {
+            var self = this;
+            self.updateCurrentPost(postObj);
+            self.updateShowPostviewState(true);
+        },
+    },
+};
 </script>
 
-<style lang='scss' scoped>
-    #post-wrap{
-        width: 70%;
-        margin: 0 auto;
-        box-sizing: border-box;
-        padding: 0 0 20px 0;
-    }
-    #post-item{
-        display: flex;
-        width: 100%;
-        height:200px;
-        box-sizing: border-box;
-        padding: 10px;
-        border-radius: 10px;
-        border: 1px dotted rgb(255, 123, 0);
-    }
-    .post-img{
-        width: 40%;
-    }
-    .post-image{
-        width: 100%;
-    }
-    .post-title{
-        height: 150px;
-    }
-    .post-info{
-        width: 60%;
-        display: flex;
-        flex-direction: column;
-    }
-    .post-by{
-        height: 50px;
-        display: flex;
-    }
-    .location{
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        width: 20%;
-    }
-    .username{
-        width: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .collect{
-        width: 30%;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-    }
+<style lang="scss" scoped>
+#post-wrap {
+    width: 50%;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: 0 0 20px 0;
+}
+#post-item {
+    display: flex;
+    width: 100%;
+    height: 200px;
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px dotted rgb(255, 123, 0);
+    margin-bottom: 20px;
+    transition: all ease 0.3s;
+}
+#post-item:hover {
+    cursor: pointer;
+    transform: translateY(-10px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+.post-img {
+    width: 40%;
+    height: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 0 10px 0 5px;
+    // background: url('../../../assets/img/404.png');
+}
+.post-body {
+    overflow: hidden;
+}
+.post-image {
+    width: 100%;
+    height: 100%;
+}
+.post-title {
+    height: 150px;
+}
+.post-info {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.post-by {
+    height: 50px;
+    display: flex;
+}
+.location {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 20%;
+}
+.username {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.collect {
+    width: 30%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+.post-body {
+    overflow: hidden;
+    height: 100px;
+    text-overflow: ellipsis;
+}
+.image-slot {
+    width: 100%;
+    height: 100%;
+    /* text-align: center; */
+    /* line-height: 100%; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+    color: rgb(230, 230, 230);
+}
+.post-detail-info {
+    position: absolute;
+    bottom: 0;
+    right: 0px;
+}
 </style>

@@ -21,6 +21,10 @@ const codeEnum = {
         code: 2002,
         msg: 'user has exsited'
     },
+    USER_HAS_FORZED: {
+        code: 2003,
+        msg: 'user has been forzed'
+    },
 
     /* 数据库 */
     INSERT_SUCCESS: {

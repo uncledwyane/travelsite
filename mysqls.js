@@ -26,6 +26,21 @@ module.exports = {
         return this.generalGet(querySentence, statusCodeSuccess, statusCodeFaild);
     },
 
+    checkIsForze(account){
+        var querySentence = `SELECT isforze FROM users WHERE account=${'\''+ account + '\''}`;
+        return new Promise(function(resolve, reject){
+            connection.query(querySentence, function(err, results, fields){
+                // console.log(JSON.parse(JSON.stringify(results[0])).isforze);
+                if(results[0]){
+                    resolve(JSON.parse(JSON.stringify(results[0])).isforze)
+                }
+                else{
+                    reject(err);
+                }
+            })
+        })
+    },
+
     // 注册，写入数据库
     registeUser: function (user){
         let userObj = user;
@@ -34,7 +49,7 @@ module.exports = {
         let randomUserId = 'userId_' + parseInt((Math.random(10) * 100000000000000000000));
         Object.setPrototypeOf(userObj, new Object());
         console.log('mysql registe recived params: ', userObj);
-        var querySentence = `INSERT INTO users(user_id, username, account, password, age, birthday, createtime, header_url, role)
+        var querySentence = `INSERT INTO users(user_id, username, account, password, age, birthday, createtime, header_url, role, isforze)
                             VALUES(${'\'' + randomUserId + '\''}, 
                                    ${'\'' + userObj.username + '\''}, 
                                    ${'\'' + userObj.account + '\''}, 
@@ -43,10 +58,21 @@ module.exports = {
                                    ${'\'' + userObj.birthday + '\''}, 
                                    ${'\'' + userObj.createtime + '\''},
                                    ${'\'' + header_url + '\''}, 
-                                   ${'\'' + role + '\''});
+                                   ${'\'' + role + '\''},
+                                   ${'\'' + false + '\''})
                                    `;
         var statusCodeSuccess = statusCodeEnum.INSERT_SUCCESS;
         return this.generalGet(querySentence, statusCodeSuccess);
+    },
+
+    isForzeUser(user_id, type){
+        var querySentence = '';
+        if(type == 'true'){
+            querySentence = `UPDATE users SET isforze='true' WHERE user_id=${'\'' + user_id + '\''}`;
+        }else{
+            querySentence = `UPDATE users SET isforze='false' WHERE user_id=${'\'' + user_id + '\''}`;
+        }
+        return this.normalGet(querySentence);
     },
 
     getUserByUserId: function (user_id){
@@ -61,6 +87,11 @@ module.exports = {
         var querySentence = `DELETE FROM users WHERE user_id=${'\'' + userId + '\''}`;
         var statusCodeSuccess = statusCodeEnum.SUCCESS;
         return this.generalGet(querySentence, statusCodeSuccess);
+    },
+
+    getPasswordByAccount(account){
+        var querySentence = `SELECT password FROM users WHERE account=${'\'' + account + '\''}`;
+        return this.normalGet(querySentence);
     },
 
     updateUser: function (newUserObj){
@@ -111,7 +142,7 @@ module.exports = {
         userObj.user_id = randomUserId;
         console.log('mysql registe recived params: ', userObj);
         Object.setPrototypeOf(userObj, new Object());
-        var querySentence = `INSERT INTO users(user_id, username, account, password, age, birthday, createtime, header_url, role)
+        var querySentence = `INSERT INTO users(user_id, username, account, password, age, birthday, createtime, header_url, role, isforze)
                             VALUES(${'\'' + userObj.user_id + '\''}, 
                                    ${'\'' + userObj.username + '\''}, 
                                    ${'\'' + userObj.account + '\''}, 
@@ -120,7 +151,8 @@ module.exports = {
                                    ${'\'' + userObj.birthday + '\''}, 
                                    ${'\'' + userObj.createtime + '\''},
                                    ${'\'' + header_url + '\''}, 
-                                   ${'\'' + userObj.role + '\''});
+                                   ${'\'' + userObj.role + '\''},
+                                   ${'\'' + false + '\''});
                                    `;
         var statusCodeSuccess = statusCodeEnum.INSERT_SUCCESS;
         console.log(querySentence);
@@ -186,6 +218,11 @@ module.exports = {
         })
     },
 
+    getAllPostsLatest(){
+        var statusCodeSuccess = statusCodeEnum.SUCCESS;
+        var querySentence = `SELECT * FROM posts ORDER By post_time DESC`;
+        return this.generalGet(querySentence, statusCodeSuccess);
+    },
 
 
     /**
@@ -239,6 +276,51 @@ module.exports = {
     },
 
 
+    getAllStarsByUserId: function(user_id){
+        var querySentence = `SELECT * FROM stars WHERE user_id=${'\'' + user_id + '\''}`;
+        return this.normalGet(querySentence);
+    },
+
+    getAllCollectsByUserId: function(user_id){
+        var querySentence = `SELECT * FROM collections WHERE user_id=${'\'' + user_id + '\''}`;
+        return this.normalGet(querySentence);
+    },
+
+    excuteStar: function(starObj){
+        var post_id = starObj.post_id;
+        var randomStarId = 'starId_' + parseInt((Math.random(10) * 100000000000000000000));
+        var user_id = starObj.user_id;
+        var querySentence = `INSERT INTO stars(post_id, user_id, star_id) VALUES(${'\'' + post_id + '\''}, ${'\'' + user_id + '\''}, ${'\'' + randomStarId + '\''})`;
+        return this.normalGet(querySentence);
+    },
+
+    excuteCollect: function(collectObj){
+        var post_id = collectObj.post_id;
+        var user_id = collectObj.user_id;
+        var randomCollectId = 'collectId_' + parseInt((Math.random(10) * 100000000000000000000));
+        var querySentence = `INSERT INTO collections(post_id, user_id, collect_id) VALUES(${'\'' + post_id + '\''}, ${'\'' + user_id + '\''}, ${'\'' + randomCollectId + '\''})`;
+        return this.normalGet(querySentence);
+    },
+
+    cancelStar(post_id){
+        var querySentence = `DELETE FROM stars WHERE post_id=${'\''+ post_id +'\''}`;
+        return this.normalGet(querySentence);
+    },
+    cancelCollect(post_id){
+        var querySentence = `DELETE FROM collections WHERE post_id=${'\''+ post_id +'\''}`;
+        return this.normalGet(querySentence);
+    },
+
+    checkIsExsist(querySentence){
+        console.log(chalk.magentaBright('checkIsExsist query: ', querySentence));
+        connection.query(querySentence, function (error, results, fields){
+            if(results && results.length > 0){
+                return true;
+            }else{
+                return false;
+            }
+        })
+    },
     generalGet: function (querySentence, statusCodeSuccess, statusCodeFaild){
         console.log(chalk.magentaBright('recived query: ', querySentence));
         return new Promise(function (resolve, reject){
@@ -259,6 +341,26 @@ module.exports = {
                             msg: statusCodeFaild.msg
                         })
                     }
+                }
+                resolve();
+            })
+        })
+    },
+
+    normalGet: function(querySentence){
+        console.log(chalk.magentaBright('recived query: ', querySentence));
+        var statusCodeSuccess = statusCodeEnum.SUCCESS;
+        return new Promise(function (resolve, reject){
+            connection.query(querySentence, function (error, results, fields){
+                if(error){
+                    reject(error);
+                }
+                if(results && results.length > 0){
+                    resolve({
+                        code: statusCodeSuccess.code,
+                        msg: statusCodeSuccess.msg,
+                        data: results
+                    })
                 }
                 resolve();
             })

@@ -52,10 +52,31 @@ app.post('/login', function (req, res){
     // TODO 拿到请求参数，查询users表中是否有这个用户，没有就返回2001，有就2002
     if(req.body){
         let params = req.body;
+        
         mysqls.findByAccount(params.account).then(function (result){
-            res.send(new Result(result));
+            console.log(result);
+            if(result.code == 2001){
+                res.send(new Result(statusCodeEnum.USER_NO_EXSIT))
+            }else{
+                mysqls.checkIsForze(params.account).then(function(isForze){
+                    if(isForze == 'false'){
+                        res.send(new Result(result));
+                    }else{
+                        res.send(new Result(statusCodeEnum.USER_HAS_FORZED))
+                    }
+                })
+            }
         })
     }
+})
+
+app.post('/forzeuser', function(req, res){
+    console.log(chalk.yellow('+++ api: /forzeuser , params', JSON.stringify(req.body)));
+    var user_id = req.body.user_id;
+    var isForze = req.body.is_forze;
+    mysqls.isForzeUser(user_id, isForze).then(function(result){
+        res.send(result);
+    })
 })
 
 app.post('/registe', function (req, res){
@@ -102,6 +123,23 @@ app.get('/getuser', function (req, res){
             res.send(result);
         })
     }
+})
+
+app.get('/finduser', function (req, res){    
+    console.log(chalk.yellow('+++ api: /getuser, req.body', JSON.stringify(req.query)));
+    if(req.query){
+        let params = req.query;
+        mysqls.findByAccount(params.account).then(function(result){
+            res.send(result);
+        })
+    }
+})
+
+app.get('/getpass', function(req, res){
+    console.log(chalk.yellow('+++ api: /getpass, req.query', JSON.stringify(req.query)));
+    mysqls.getPasswordByAccount(req.query.account).then(function(result){
+        res.send(result);
+    })
 })
 
 /**
@@ -160,16 +198,22 @@ app.get('/allposts', function (req, res){
     })
 })
 
+app.get('/allpostslatest', function(req, res){
+    console.log(chalk.yellow('+++ api: /allpostslatest, req.body', JSON.stringify(req.body)));
+    mysqls.getAllPostsLatest().then(function(result){
+        res.send(result);
+    })
+})
 
 app.get('/postswithuser', function (req, res){
-    console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.query)));
+    console.log(chalk.yellow('+++ api: /postswithuser, req.body', JSON.stringify(req.query)));
     mysqls.getPostsByUserId(req.query.user_id).then(function (result) {
         res.send(result);
     })
 })
 
 app.post('/deletepost', function (req, res){
-    console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.body)));
+    console.log(chalk.yellow('+++ api: /deletepost, req.body', JSON.stringify(req.body)));
     mysqls.deletePostByPostId(req.body.post_id).then(function (result){
         res.send(result);
     })
@@ -177,7 +221,7 @@ app.post('/deletepost', function (req, res){
 
 
 app.post('/updatepost', function (req, res){
-    console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.body)));
+    console.log(chalk.yellow('+++ api: /updatepost, req.body', JSON.stringify(req.body)));
     mysqls.modifyPost(req.body).then(function (result){
         res.send(result);
     })
@@ -196,21 +240,21 @@ app.post('/pushcomment', function (req, res){
 })
 
 app.get('/getcomment', function(req, res){
-    console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.query)));
+    console.log(chalk.yellow('+++ api: /getcomment, req.body', JSON.stringify(req.query)));
     mysqls.getCommentByPostId(req.query.post_id).then(function (result){
         res.send(result);
     })
 })
 
 app.get('/getcommentwithuser', function(req, res){
-    console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.query)));
+    console.log(chalk.yellow('+++ api: /getcommentwithuser, req.body', JSON.stringify(req.query)));
     mysqls.getCommentByUserId(req.query.user_id).then(function (result){
         res.send(result);
     })
 })
 
 app.post('/updatecomment', function(req, res){
-    console.log(chalk.yellow('+++ api: /pushcomment, req.body', JSON.stringify(req.body)));
+    console.log(chalk.yellow('+++ api: /updatecomment, req.body', JSON.stringify(req.body)));
     mysqls.modifyComment(req.body).then(function (result){
         res.send(result);
     })
@@ -220,7 +264,7 @@ app.post('/updatecomment', function(req, res){
  * 获取所有评论
  */
 app.get('/allcomments', function(req, res){
-    console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.query)));
+    console.log(chalk.yellow('+++ api: /allcomments, req.body', JSON.stringify(req.query)));
     mysqls.getAllComments().then(function (result){
         res.send(result);
     })
@@ -228,8 +272,63 @@ app.get('/allcomments', function(req, res){
 
 
 app.post('/deletecomment', function(req, res){
-    console.log(chalk.yellow('+++ api: /pushpost, req.body', JSON.stringify(req.body)));
+    console.log(chalk.yellow('+++ api: /deletecomment, req.body', JSON.stringify(req.body)));
     mysqls.deleteComment(req.body.comment_id).then(function (result){
+        res.send(result);
+    })
+})
+
+app.get('/allstars', function(req, res){    
+    console.log(chalk.yellow('+++ api: /allstars, req.body', JSON.stringify(req.query)));
+    var user_id = req.query.user_id;
+    mysqls.getAllStarsByUserId(user_id).then(function(result){
+        res.send(result);
+    })
+})
+
+app.get('/allcollects', function(req, res){
+    console.log(chalk.yellow('+++ api: /allcollects, req.body', JSON.stringify(req.query)));
+    var user_id = req.query.user_id;
+    mysqls.getAllCollectsByUserId(user_id).then(function(result){
+        res.send(result);
+    })
+})
+
+app.post('/star', function(req, res){
+    console.log(chalk.yellow('+++ api: /star, req.body', JSON.stringify(req.body)));
+    var starObj = {
+        post_id: req.body.post_id,
+        user_id: req.body.user_id
+    }
+    var querySentence = `SELECT * FROM stars WHERE post_id=${'\'' + starObj.post_id + '\''}`;
+    if(!mysqls.checkIsExsist(querySentence)){
+        mysqls.excuteStar(starObj).then(function(result){
+            res.send(result);
+        })
+    }
+})
+
+app.post('/collect', function(req, res){
+    console.log(chalk.yellow('+++ api: /collect, req.body', JSON.stringify(req.body)));
+    var collectObj = {
+        post_id: req.body.post_id,
+        user_id: req.body.user_id
+    }
+    mysqls.excuteCollect(collectObj).then(function(result){
+        res.send(result);
+    })
+})
+
+app.post('/cancelstar', function (req, res){
+    console.log(chalk.yellow('+++ api: /cancelstar, req.body', JSON.stringify(req.body)));
+    mysqls.cancelStar(req.body.post_id).then(function(result){
+        res.send(result);
+    })
+})
+
+app.post('/cancelcollect', function (req, res){
+    console.log(chalk.yellow('+++ api: /cancelcollect, req.body', JSON.stringify(req.body)));
+    mysqls.cancelCollect(req.body.post_id).then(function(result){
         res.send(result);
     })
 })

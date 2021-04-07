@@ -321,6 +321,38 @@ module.exports = {
             }
         })
     },
+
+    getAllCarousel(){
+        var querySentence = `SELECT * FROM carousels`;
+        return this.normalGet(querySentence);
+    },
+
+    addCarousel(imgUrl){
+        var querySentence = `INSERT INTO carousels(imgurl) VALUES(${'\'' + imgUrl + '\''})`;
+        return this.normalGet(querySentence);
+    },
+
+    deleteCarousel(imgUrl){
+        var querySentence = `DELETE FROM carousels WHERE imgurl=${'\'' + imgUrl + '\''}`;
+        return this.normalGet(querySentence);
+    },
+
+    getAllAnnounces(){
+        var querySentence = `SELECT * FROM announces`;
+        return this.normalGet(querySentence);
+    },
+
+    deleteAnnounce(id){
+        var querySentence = `DELETE FROM announces WHERE announce_id=${'\'' + id + '\''}`;
+        return this.normalGet(querySentence);
+    },
+
+    pushAnnounce(content){
+        var announce_id = 'announces_' + parseInt((Math.random(10) * 1000000));
+        var querySentence = `INSERT INTO announces(announce_id, announce_body) VALUES(${'\'' + announce_id + '\''}, ${'\'' + content + '\''} )`
+        return this.normalGet(querySentence);
+    },
+
     generalGet: function (querySentence, statusCodeSuccess, statusCodeFaild){
         console.log(chalk.magentaBright('recived query: ', querySentence));
         return new Promise(function (resolve, reject){

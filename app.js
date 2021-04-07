@@ -333,6 +333,49 @@ app.post('/cancelcollect', function (req, res){
     })
 })
 
+app.get('/allcarousel', function(req, res){
+    console.log(chalk.yellow('+++ api: /allcarousel, req.body', JSON.stringify(req.body)));
+    mysqls.getAllCarousel().then(function (result){
+        res.send(result);
+    })
+})
+
+app.post('/addcarousel', function(req, res){
+    console.log(chalk.yellow('+++ api: /addcarousel, req.body', JSON.stringify(req.body)));
+    var imgUrl = req.body.imgUrl;
+    mysqls.addCarousel(imgUrl).then(function (result){
+        res.send(result);
+    })
+})
+
+app.post('/deletecarousel', function(req, res){
+    console.log(chalk.yellow('+++ api: /deletecarousel, req.body', JSON.stringify(req.body)));
+    var imgUrl = req.body.imgUrl;
+    mysqls.deleteCarousel(imgUrl).then(function (result){
+        res.send(result);
+    })
+})
+
+app.get('/allannounces', function(req, res){
+    console.log(chalk.yellow('+++ api: /allannounces, req.body', JSON.stringify(req.body)));
+    mysqls.getAllAnnounces().then(function(result){
+        res.send(result)
+    })
+})
+
+app.post('/deleteannounce', function(req, res){
+    var announce_id = req.body.id;
+    mysqls.deleteAnnounce(announce_id).then(function(result){
+        res.send(result);
+    })
+})
+
+app.post('/pushannounce', function(req, res){
+    var announceBody = req.body.announceBody;
+    mysqls.pushAnnounce(announceBody).then(function (result){
+        res.send(result);
+    })
+})
 
 app.listen(3000, function (){
     console.log('app listen on port 3000...')

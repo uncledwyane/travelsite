@@ -20,6 +20,7 @@
             style="margin-bottom: 20px"
         >
         </el-input>
+        <el-button type="success" plain data-chevereto-pup-trigger="" style="margin-bottom: 20px;"  data-chevereto-pup-id="8c5970c8-bb94-4001-aa35-1a9d924a408d">上传图片</el-button>
         <div class="action-area">
             <el-button type="primary" @click="post"> 发表攻略 </el-button>
         </div>

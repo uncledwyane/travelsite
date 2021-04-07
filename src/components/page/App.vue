@@ -76,16 +76,6 @@ export default {
                     showName: "首页",
                     path: "/home",
                 },
-                // {
-                //     name: "seize",
-                //     showName: "攻略",
-                //     path: "/seize",
-                // },
-                // {
-                //     name: "comm",
-                //     showName: "社区",
-                //     path: "/comm",
-                // },
                 {
                     name: "admin",
                     showName: "后台",

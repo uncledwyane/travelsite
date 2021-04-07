@@ -5,10 +5,8 @@ import App from './components/page/App.vue'
 import router from './router/router'
 import Axios from 'axios'
 import store from '@/store/index.js'
-import CustomTheme from '@/components/theme'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import html2canvas from 'html2canvas'
 
 Vue.use(ElementUI)
 Vue.use(VueRouter)

@@ -6,6 +6,8 @@ import Users from '@/components/component/Users'
 import Posts from '@/components/component/Posts'
 import MyInfo from '@/components/component/MyInfo'
 import Login from '@/components/page/Login'
+import Carousel from '@/components/component/Carousel'
+import Announces from '@/components/component/Announces'
 
 export default new VueRouter({
     // mode: 'history',
@@ -30,6 +32,12 @@ export default new VueRouter({
                 },
                 {
                     path: 'myinfo', component: MyInfo
+                },
+                {
+                    path: 'carousel', component: Carousel
+                },
+                {
+                    path: 'announces', component: Announces
                 }
             ]
         }

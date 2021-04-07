@@ -31,6 +31,14 @@
                         <i class="el-icon-s-custom"></i>
                         <span slot="title">个人信息</span>
                     </el-menu-item>
+                    <el-menu-item index="carousel" :disabled="user == null || user.role != 'admin'">
+                        <i class="el-icon-picture"></i>
+                        <span slot="title">轮播图片</span>
+                    </el-menu-item>
+                    <el-menu-item index="announces" :disabled="user == null || user.role != 'admin'">
+                        <i class="el-icon-chat-dot-round"></i>
+                        <span slot="title">网站公告</span>
+                    </el-menu-item>
                 </el-menu>
             </el-col>
         </div>

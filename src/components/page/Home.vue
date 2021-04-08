@@ -1,8 +1,8 @@
 <template>
     <div id="home">
         <el-carousel height="500px">
-            <el-carousel-item v-for="(imgUrl, index) in bannerImgs" :key="index">
-                <img :src="imgUrl" class="bannerImg" />
+            <el-carousel-item v-for="(image, index) in bannerImgs" :key="index">
+                <img :src="image.imgurl" class="bannerImg" />
             </el-carousel-item>
         </el-carousel>
         <div class="youji-choose">
@@ -58,6 +58,24 @@ export default {
                 },
             ],
         };
+    },
+    created() {
+        var self = this;
+        self.$axios.get("/allcarousel").then(function (res) {
+            console.log("allcarousel", res.data.data);
+            self.bannerImgs = res.data.data;
+        });
+    },
+    mounted() {
+        var self = this;
+        self.$axios.get("/allannounces").then(function (res) {
+            self.$notify({
+                title: "网站公告",
+                message: res.data.data[0].announce_body,
+                duration: 5000,
+                type: "warning",
+            });
+        });
     },
     methods: {
         selectOption(option) {

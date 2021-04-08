@@ -342,8 +342,8 @@ module.exports = {
         return this.normalGet(querySentence);
     },
 
-    deleteAnnounce(id){
-        var querySentence = `DELETE FROM announces WHERE announce_id=${'\'' + id + '\''}`;
+    modifyAnnounce(body, id){
+        var querySentence = `UPDATE announces SET announce_body=${'\'' + body + '\''} WHERE announce_id=${'\'' + id + '\''}`;
         return this.normalGet(querySentence);
     },
 

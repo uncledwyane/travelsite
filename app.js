@@ -363,9 +363,10 @@ app.get('/allannounces', function(req, res){
     })
 })
 
-app.post('/deleteannounce', function(req, res){
+app.post('/modifyannounce', function(req, res){
     var announce_id = req.body.id;
-    mysqls.deleteAnnounce(announce_id).then(function(result){
+    var announce_body = req.body.announceBody;
+    mysqls.modifyAnnounce(announce_body, announce_id).then(function(result){
         res.send(result);
     })
 })

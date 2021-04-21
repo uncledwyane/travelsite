@@ -8,15 +8,23 @@ import MyInfo from '@/components/component/MyInfo'
 import Login from '@/components/page/Login'
 import Carousel from '@/components/component/Carousel'
 import Announces from '@/components/component/Announces'
+import My from '@/components/page/My'
 
 export default new VueRouter({
     // mode: 'history',
     routes: [
-        {path: '/', name: '/', redirect: '/login'},
+        {
+            path: '/', name: '/', redirect: '/login'
+        },
         {
             path: '/home', name: 'name', component: Home
         },
-        {path: '/login', name: 'login', component: Login},
+        {
+            path: '/login', name: 'login', component: Login
+        },
+        {
+            path: '/my', name: 'my', component: My
+        },
         {
             path: '/admin', name: 'admin', component: Admin,
             redirect: '/admin/comments',

@@ -77,10 +77,15 @@ export default {
                     path: "/home",
                 },
                 {
+                    name: "my",
+                    showName: "我的",
+                    path: "/my",
+                },
+                {
                     name: "admin",
                     showName: "后台",
                     path: "/admin",
-                },
+                }
             ],
         };
     },

@@ -31,18 +31,13 @@
 import Post from "@/components/component/Post";
 import New from "@/components/component/New";
 import Push from "@/components/component/Push";
-
+import bus from '@/components/bus'
 export default {
     data() {
         return {
             showLogin: true,
             currentOption: "hot",
-            bannerImgs: [
-                "https://s3.ax1x.com/2021/02/19/y4PkXF.jpg",
-                "https://s3.ax1x.com/2021/02/19/y4PZ79.jpg",
-                "https://s3.ax1x.com/2021/02/19/y4PmkR.jpg",
-                "https://s3.ax1x.com/2021/02/19/y4PMp6.jpg",
-            ],
+            bannerImgs: null,
             youji: [
                 {
                     name: "hot",
@@ -76,6 +71,10 @@ export default {
                 type: "warning",
             });
         });
+
+        bus.$on('changeNav', function(res){
+            self.currentOption = res;
+        })
     },
     methods: {
         selectOption(option) {

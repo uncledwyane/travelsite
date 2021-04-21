@@ -6,24 +6,19 @@
                     <span style="margin-left: 10px">{{ scope.row.username }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="帖子标题" width="100">
+            <el-table-column label="帖子标题" width="600">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{ scope.row.post_title }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="帖子内容" width="640">
-                <template slot-scope="scope">
-                    <span style="margin-left: 10px">{{ scope.row.post_body }}岁</span>
-                </template>
-            </el-table-column>
-            <el-table-column label="发布时间" width="150">
+            <el-table-column label="发布时间" width="200">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{ scope.row.post_time }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="帖子封面" width="230">
+            <el-table-column label="帖子封面" width="300">
                 <template slot-scope="scope">
-                    <span style="margin-left: 10px">{{ scope.row.post_coverimg }}</span>
+                    <span style="margin-left: 10px">{{ scope.row.post_coverimg | hasCover}}</span>
                 </template>
             </el-table-column>
             <el-table-column label="操作" fixed="right" width="160">
@@ -56,10 +51,9 @@ export default {
         ...mapState(["allPosts"]),
     },
     filters: {
-        formatUserName(user_id) {
-            var self = this;
-            return self.getUserName(user_id);
-        },
+        hasCover(coverlink){
+            return coverlink != undefined ? coverlink : '没有封面' ;
+        }
     },
     mounted() {
         var self = this;
@@ -137,4 +131,11 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.post_body{
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 4;
+}
+</style>

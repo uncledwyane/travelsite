@@ -6,11 +6,12 @@
                     <el-input v-model="currentPost.post_title"></el-input>
                 </el-form-item>
                 <el-form-item label="内容">
-                    <el-input
+                    <!-- <el-input
                         v-model="currentPost.post_body"
                         type="textarea"
                         :autosize="{ minRows: 9 }"
-                    ></el-input>
+                    ></el-input> -->
+                    <div id="editor"></div>
                 </el-form-item>
                 <el-form-item label="封面链接">
                     <el-input v-model="currentPost.post_coverimg"></el-input>
@@ -33,6 +34,7 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 import bus from "@/components/bus";
+import Editor from 'wangeditor'
 export default {
     data() {
         return {
@@ -40,6 +42,7 @@ export default {
                 post_title: "",
                 post_body: "",
                 post_coverimg: "",
+                editor: null
             },
         };
     },
@@ -52,11 +55,15 @@ export default {
     mounted() {
         var self = this;
         self.currentPost = JSON.parse(JSON.stringify(self.editPost));
+        self.editor = new Editor('#editor')
+        self.editor.create();
+        self.editor.txt.html(self.currentPost.post_body);
     },
     methods: {
         ...mapMutations(["setIsShowPostEdit"]),
         modify() {
             var self = this;
+            self.currentPost.post_body = self.editor.txt.html();
             var params = self.currentPost;
             self.$axios.post("/updatepost", params).then(function (res) {
                 self.$message({

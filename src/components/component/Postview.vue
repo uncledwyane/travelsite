@@ -27,8 +27,7 @@
                         </div>
                     </el-image>
                 </div>
-                <p class="post-content">
-                    {{ post.post_body }}
+                <p class="post-content" v-html="post.post_body">
                 </p>
                 <div class="star-collect">
                     <div class="middle"></div>

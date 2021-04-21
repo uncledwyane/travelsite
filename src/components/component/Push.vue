@@ -72,6 +72,7 @@ export default {
                     self.$axios.get("/allposts").then(function (result) {
                         self.setAllposts(result.data.data);
                         bus.$emit('changeNav', 'hot');
+                        bus.$emit("updateallposts");
                     });
                 });
             }

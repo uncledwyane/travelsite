@@ -46,15 +46,22 @@ export default {
             self.nav = nav;
         },
         getMyCollect(){
-
+            var self = this;
+            
         },
         getMyStar(){
+            var self = this;
+
 
         },
         getMyPost(){
+            var self = this;
+
 
         },
         getMyInfo(){
+            var self = this;
+
 
         },
         getData(api){

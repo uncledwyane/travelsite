@@ -37,8 +37,8 @@
             <div class="post-info">
                 <div class="post-title">
                     <h3 style="font-size: 15px">{{ post.post_title }}</h3>
-                    <p class="post-body" style="color: grey; font-size: 12px">
-                        {{ post.post_body }}
+                    <p class="post-body" style="color: grey; font-size: 12px" v-html="post.post_body">
+                        <!-- {{ post.post_body }} -->
                     </p>
                 </div>
                 <div class="post-detail-info">

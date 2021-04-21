@@ -121,14 +121,15 @@ export default {
         bus.$on("updateStarsAndCollects", function () {
             self.getStarsAndCollects();
         });
-        self.$axios.get("/allposts").then(function (res) {
-            self.setAllposts(res.data.data);
-            console.log("allPosts: ", self.allPosts);
-        });
-        self.$axios.get("/allpostslatest").then(function (res) {
-            self.setAllLatestPosts(res.data.data);
-            console.log("allLatestPosts: ", self.allLatestPosts);
-        });
+
+        bus.$on('updateallposts', function(){
+            self.getAllPosts();
+            self.getAllLatestPosts();
+        })
+        self.getAllPosts();
+
+        self.getAllLatestPosts();
+
         self.getStarsAndCollects();
         if (localStorage.getItem("currentNav")) {
             self.goTo("/" + localStorage.getItem("currentNav"));
@@ -148,6 +149,20 @@ export default {
             "setCurrentUserStar",
             "setCurrentUserCollect",
         ]),
+        getAllLatestPosts(){
+            var self = this;
+            self.$axios.get("/allpostslatest").then(function (res) {
+                self.setAllLatestPosts(res.data.data);
+                console.log("allLatestPosts: ", self.allLatestPosts);
+            });
+        },
+        getAllPosts(){
+            var self = this;
+            self.$axios.get("/allposts").then(function (res) {
+                self.setAllposts(res.data.data);
+                console.log("allPosts: ", self.allPosts);
+            });
+        },
         goTo(path) {
             var self = this;
             var name = path.substr(1, path.length - 1);
